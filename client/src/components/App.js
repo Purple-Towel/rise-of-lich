@@ -25,7 +25,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" id="phaser-example">
         <h1>{ this.state.message }</h1>
         <button onClick={this.fetchData} >
           Fetch Data
