@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Tutorial from "./Tutorial";
-import Aout from "./About";
+import Game from "./Game";
 import About from './About';
 
 class App extends Component {
@@ -12,8 +12,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Play Game!</h1>
-        <div id="phaser-example"/>
+        <Game></Game>
         <Tutorial></Tutorial>
         <About></About>    
       </div>
