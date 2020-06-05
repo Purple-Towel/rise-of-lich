@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import Tutorial from "./Tutorial";
+import Aout from "./About";
+import About from './About';
 
 class App extends Component {
   constructor(props) {
@@ -12,7 +14,8 @@ class App extends Component {
       <div className="App">
         <h1>Play Game!</h1>
         <div id="phaser-example"/>
-        <Tutorial></Tutorial>       
+        <Tutorial></Tutorial>
+        <About></About>    
       </div>
     );
   }
