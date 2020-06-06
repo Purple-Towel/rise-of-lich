@@ -10,11 +10,12 @@ export default function App() {
   const ABOUT = "ABOUT";
   const TUTORIAL = "TUTORIAL";
 
-  const { mode, toggle} = useToggleHook(ABOUT, TUTORIAL);
+  const { mode, toggleState} = useToggleHook(ABOUT, TUTORIAL);
 
     return (
       <div className="App">
         <Game></Game>
+        <button onClick={toggleState}>Toggle</button>
         <Tutorial></Tutorial>
         <About></About>    
       </div>
