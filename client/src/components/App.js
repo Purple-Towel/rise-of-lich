@@ -15,7 +15,7 @@ export default function App() {
 
     return (
       <div className="App">
-        <nav><Nav/></nav>
+        <nav><Nav onClick={toggleState} mode={mode}/></nav>
         <Game></Game>
         <button onClick={toggleState}>Toggle</button>
         {mode === TUTORIAL && (<Tutorial />)}

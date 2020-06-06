@@ -1,13 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Nav extends Component {
-    render() {
-        return (
-        <button>
-            Test
-        </button>
-        )
-    }
+export default function Nav(props) {
+    const { mode, onClick } = props;
+
+    return (
+    <button onClick={onClick}>
+        {mode === "ABOUT" && "Tutorial"}
+        {mode === "TUTORIAL" && "About"}
+    </button>
+    )
 }
-
-export default Nav;
