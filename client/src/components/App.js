@@ -4,12 +4,11 @@ import Tutorial from "./Tutorial";
 import Game from "./Game";
 import About from './About';
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-  }
+import { useToggleHook } from "./hooks/useToggleHook"
 
-  render() {
+export default function App() {
+
+
     return (
       <div className="App">
         <Game></Game>
@@ -18,6 +17,3 @@ class App extends Component {
       </div>
     );
   }
-}
-
-export default App;
