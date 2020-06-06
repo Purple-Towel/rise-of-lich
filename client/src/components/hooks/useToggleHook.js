@@ -13,5 +13,5 @@ export function useToggleHook(mode1, mode2) {
         }
     };
 
-    return {toggleState}
+    return { mode, toggleState}
 }
