@@ -5,6 +5,7 @@ export default class Game extends Phaser.Scene {
   private player?: Phaser.GameObjects.Sprite;
   private boxes: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
+  private facing: 'right' | 'left' | 'up' | 'down' = 'right';
   constructor() {
     super('game');
   }
@@ -76,11 +77,19 @@ export default class Game extends Phaser.Scene {
     if (justRight) {
       // players next coords
       if (!this.player) return;
+      if (this.facing === 'left') {
+        this.player.toggleFlipX();
+        this.facing = 'right';
+      }
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'positive');
     } else if (justLeft) {
       if (!this.player) return;
+      if (this.facing === 'right') {
+        this.player.toggleFlipX();
+        this.facing = 'left';
+      }
       const nx = this.player.x - 8;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'negative');
