@@ -23,6 +23,10 @@
   color: #61dafb;
 }
 
+body {
+  background: url("../assets/paperbg.jpg")
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
