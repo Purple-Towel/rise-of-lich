@@ -120,7 +120,7 @@ export default class Game extends Phaser.Scene {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
     // if next move has wall escape early
-    if (this.hasObstructionAt(x, y)) return undefined;
+    if (this.hasObstruction(x, y)) return undefined;
 
     const PIXELS = 16;
 
@@ -171,22 +171,26 @@ export default class Game extends Phaser.Scene {
     direction: string
   ) {
     if (axis === 'x' && direction === 'negative') {
-      if (this.hasObstructionAt(box.getBounds().x - 8, box.getBounds().y + 8)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x - 8, box.getBounds().y + 8)
+      ) {
         return false;
       }
     } else if (axis === 'x' && direction === 'positive') {
       if (
-        this.hasObstructionAt(box.getBounds().x + 24, box.getBounds().y + 8)
+        this.hasObjectObstruction(box.getBounds().x + 24, box.getBounds().y + 8)
       ) {
         return false;
       }
     } else if (axis === 'y' && direction === 'negative') {
-      if (this.hasObstructionAt(box.getBounds().x + 8, box.getBounds().y - 8)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x + 8, box.getBounds().y - 8)
+      ) {
         return false;
       }
     } else if (axis === 'y' && direction === 'positive') {
       if (
-        this.hasObstructionAt(box.getBounds().x + 8, box.getBounds().y + 24)
+        this.hasObjectObstruction(box.getBounds().x + 8, box.getBounds().y + 24)
       ) {
         return false;
       }
@@ -194,12 +198,12 @@ export default class Game extends Phaser.Scene {
     return true;
   }
 
-  private hasObstructionAt(x: number, y: number) {
+  private hasObstruction(x: number, y: number) {
     if (!this.layer) {
       return false;
     }
 
-    const barrier = this.getBarrierAt(x, y);
+    const barrier = this.getObstructionAt(x, y);
     if (barrier) {
       return true;
     }
@@ -210,6 +214,12 @@ export default class Game extends Phaser.Scene {
     return obstructions.indexOf(tile.index) !== -1;
   }
 
+  private hasObjectObstruction(x: number, y: number) {
+    if (this.hasObstruction(x, y) || this.getBoxAt(x, y)) {
+      return true;
+    }
+  }
+
   private getBoxAt(x: number, y: number) {
     return this.boxes.find(box => {
       const rect = box.getBounds();
@@ -217,11 +227,13 @@ export default class Game extends Phaser.Scene {
     });
   }
 
-  private getBarrierAt(x: number, y: number) {
-    return this.barriers.find(barrier => {
+  private getObstructionAt(x: number, y: number) {
+    const barrier = this.barriers.find(barrier => {
       const rect = barrier.getBounds();
       return rect.contains(x, y);
     });
+
+    return barrier;
   }
 
   private createPlayerAnimations() {
