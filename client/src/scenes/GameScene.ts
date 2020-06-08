@@ -1,23 +1,28 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
+// import movesLeft from "../helpers/movesLeft";
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
   private boxes: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
+  private moves = 0;
+  private movesText?: Phaser.GameObjects.Text;
+  // private canvas?: Phaser.s
+  // private movesLeft?: movesLeft;
   constructor() {
-    super('game');
+    super("game");
   }
 
   preload() {
-    this.load.spritesheet('tiles', 'assets/Dungeon_Tileset.png', {
+    this.load.spritesheet("tiles", "assets/Dungeon_Tileset.png", {
       frameWidth: 16,
       startFrame: 0,
     });
 
     this.load.spritesheet(
-      'character',
-      'assets/0x72_DungeonTilesetII_v1.3.png',
+      "character",
+      "assets/0x72_DungeonTilesetII_v1.3.png",
       {
         frameWidth: 16,
         startFrame: 0,
@@ -28,6 +33,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    // this.canvas = this.sys.game.canvas;
+
     const level = [
       [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
@@ -48,19 +55,25 @@ export default class Game extends Phaser.Scene {
       tileHeight: 16,
     });
 
-    const tiles = map.addTilesetImage('tiles');
+    const tiles = map.addTilesetImage("tiles");
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
     this.boxes = this.layer
-      .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
-      .map(box => box.setOrigin(0));
+      .createFromTiles(83, 11, { key: "tiles", frame: 83 })
+      .map((box) => box.setOrigin(0));
 
     this.player = this.layer
-      .createFromTiles(400, 11, { key: 'character', frame: 40 })
+      .createFromTiles(400, 11, { key: "character", frame: 40 })
       .pop();
 
     this.player?.setOrigin(0);
     this.createPlayerAnimations();
+
+    this.movesText = this.add.text(16, 170, "Moves: 0", {
+      fontSize: "16px",
+      fill: "#f00",
+    });
+    this.movesText.setShadow(1, 1);
   }
 
   update() {
@@ -78,22 +91,30 @@ export default class Game extends Phaser.Scene {
       if (!this.player) return;
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
-      this.tweenMove(nx, ny, 'x', 'positive');
+      this.tweenMove(nx, ny, "x", "positive");
+      this.moves += 1; //! REPLACE THIS WITH CLASS METHOD
+      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
       if (!this.player) return;
       const nx = this.player.x - 8;
       const ny = this.player.y + 8;
-      this.tweenMove(nx, ny, 'x', 'negative');
+      this.tweenMove(nx, ny, "x", "negative");
+      this.moves += 1; //! REPLACE THIS WITH CLASS METHOD
+      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justDown) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y + 24;
-      this.tweenMove(nx, ny, 'y', 'positive');
+      this.tweenMove(nx, ny, "y", "positive");
+      this.moves += 1; //! REPLACE THIS WITH CLASS METHOD
+      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justUp) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y - 8;
-      this.tweenMove(nx, ny, 'y', 'negative');
+      this.tweenMove(nx, ny, "y", "negative");
+      this.moves += 1; //! REPLACE THIS WITH CLASS METHOD
+      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
     }
   }
 
@@ -101,7 +122,7 @@ export default class Game extends Phaser.Scene {
     x: number,
     y: number,
     axis: string,
-    direction: 'positive' | 'negative'
+    direction: "positive" | "negative"
   ) {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
@@ -131,13 +152,13 @@ export default class Game extends Phaser.Scene {
     // move player
     this.tweens.add({
       onStart: () => {
-        this.player?.anims.play('move', true);
+        this.player?.anims.play("move", true);
       },
       targets: this.player,
       [axis]: directionXY[direction],
       duration: 500,
       onComplete: () => {
-        this.player?.anims.play('idle', true);
+        this.player?.anims.play("idle", true);
       },
       onCompleteScope: this,
     });
@@ -150,19 +171,19 @@ export default class Game extends Phaser.Scene {
     direction: string,
     value: number
   ) {
-    if (axis === 'x' && direction === 'negative') {
+    if (axis === "x" && direction === "negative") {
       if (this.hasObstructionAt(box.getBounds().x - value, box.getBounds().y)) {
         return false;
       }
-    } else if (axis === 'x' && direction === 'positive') {
+    } else if (axis === "x" && direction === "positive") {
       if (this.hasObstructionAt(box.getBounds().x + value, box.getBounds().y)) {
         return false;
       }
-    } else if (axis === 'y' && direction === 'negative') {
+    } else if (axis === "y" && direction === "negative") {
       if (this.hasObstructionAt(box.getBounds().x, box.getBounds().y - value)) {
         return false;
       }
-    } else if (axis === 'y' && direction === 'positive') {
+    } else if (axis === "y" && direction === "positive") {
       if (this.hasObstructionAt(box.getBounds().x, box.getBounds().y + value)) {
         return false;
       }
@@ -182,7 +203,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private getBoxAt(x: number, y: number) {
-    return this.boxes.find(box => {
+    return this.boxes.find((box) => {
       const rect = box.getBounds();
       return rect.contains(x, y);
     });
@@ -190,8 +211,8 @@ export default class Game extends Phaser.Scene {
 
   private createPlayerAnimations() {
     this.anims.create({
-      key: 'move',
-      frames: this.anims.generateFrameNumbers('character', {
+      key: "move",
+      frames: this.anims.generateFrameNumbers("character", {
         start: 40,
         end: 43,
       }),
@@ -200,8 +221,8 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: 'idle',
-      frames: [{ key: 'character', frame: 40 }],
+      key: "idle",
+      frames: [{ key: "character", frame: 40 }],
       frameRate: 20,
     });
   }
