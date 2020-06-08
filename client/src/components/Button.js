@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Nav(props) {
+export default function Button(props) {
     const { mode, onClick } = props;
 
     return (
