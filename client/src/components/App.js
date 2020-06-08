@@ -3,6 +3,7 @@ import './App.css';
 import Tutorial from "./Tutorial";
 import Game from "./Game";
 import About from './About';
+import Nav from "./Nav";
 
 import { useToggleHook } from "./hooks/useToggleHook"
 
@@ -14,6 +15,7 @@ export default function App() {
 
     return (
       <div className="App">
+        <nav><Nav onClick={toggleState} mode={mode}/></nav>
         <Game></Game>
         <button onClick={toggleState}>Toggle</button>
         {mode === TUTORIAL && (<Tutorial />)}
