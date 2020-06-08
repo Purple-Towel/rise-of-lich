@@ -119,6 +119,7 @@ export default class Game extends Phaser.Scene {
   ) {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
+
     // if next move has wall escape early
     if (this.hasObstruction(x, y)) return undefined;
 
@@ -133,19 +134,23 @@ export default class Game extends Phaser.Scene {
     const box = this.getBoxAt(x, y);
 
     if (box) {
+      if (this.tweens.isTweening(box)) {
+        return undefined;
+      }
       if (!this.checkBoxMovement(box, axis, direction)) {
         return undefined;
       }
       this.tweens.add({
         targets: box,
         [axis]: directionXY[direction],
-        duration: 500,
+        duration: 400,
         onStart: () => {
           this.player?.anims.play('move', true);
         },
         onComplete: () => {
           this.player?.anims.play('idle', true);
         },
+        onCompleteScope: this,
       });
     } else {
       // move player
@@ -155,7 +160,7 @@ export default class Game extends Phaser.Scene {
         },
         targets: this.player,
         [axis]: directionXY[direction],
-        duration: 500,
+        duration: 400,
         onComplete: () => {
           this.player?.anims.play('idle', true);
         },
