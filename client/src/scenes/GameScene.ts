@@ -126,21 +126,28 @@ export default class Game extends Phaser.Scene {
         targets: box,
         [axis]: directionXY[direction],
         duration: 500,
+        onStart: () => {
+          this.player?.anims.play('move', true);
+        },
+        onComplete: () => {
+          this.player?.anims.play('idle', true);
+        },
+      });
+    } else {
+      // move player
+      this.tweens.add({
+        onStart: () => {
+          this.player?.anims.play('move', true);
+        },
+        targets: this.player,
+        [axis]: directionXY[direction],
+        duration: 500,
+        onComplete: () => {
+          this.player?.anims.play('idle', true);
+        },
+        onCompleteScope: this,
       });
     }
-    // move player
-    this.tweens.add({
-      onStart: () => {
-        this.player?.anims.play('move', true);
-      },
-      targets: this.player,
-      [axis]: directionXY[direction],
-      duration: 500,
-      onComplete: () => {
-        this.player?.anims.play('idle', true);
-      },
-      onCompleteScope: this,
-    });
   }
 
   // checks if box is being moved into an obstruction
