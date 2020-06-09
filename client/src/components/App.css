@@ -24,7 +24,7 @@
 }
 
 body {
-  background: url("../assets/paperbg.jpg")
+  background: #ebd5b3 url("../assets/paperbg.jpg")
 }
 
 @keyframes App-logo-spin {
