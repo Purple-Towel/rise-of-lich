@@ -4,6 +4,8 @@ export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
   private boxes: Phaser.GameObjects.Sprite[] = [];
+  private spikes: Phaser.GameObjects.Sprite[] = [];
+  private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
   private barriers: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' | 'up' | 'down' = 'right';
@@ -36,7 +38,7 @@ export default class Game extends Phaser.Scene {
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 11, 11, 11, 11, 25],
+      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 777, 778, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 49, 11, 11, 11, 11, 11, 11, 83, 11, 11, 11, 15],
@@ -57,6 +59,14 @@ export default class Game extends Phaser.Scene {
       .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
       .map(barrier => barrier.setOrigin(0));
 
+      this.spikes = this.layer
+      .createFromTiles(777, 11, {key: 'character', frame: 356})
+      .map(spike => spike.setOrigin(0))
+
+      this.spikesAlternating1 = this.layer
+      .createFromTiles(778, 11, {key: 'character', frame: 353})
+      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0))
+
     this.boxes = this.layer
       .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
       .map(box => box.setOrigin(0));
@@ -66,7 +76,8 @@ export default class Game extends Phaser.Scene {
       .pop();
 
     this.player?.setOrigin(0);
-    this.createPlayerAnimations();
+    this.createPlayerAnimations()
+    this.createSpikeAnimations();
   }
 
   update() {
@@ -249,5 +260,35 @@ export default class Game extends Phaser.Scene {
       frames: [{ key: 'character', frame: 40 }],
       frameRate: 20,
     });
+  }
+
+  private getSpikeAt(x:number, y:number) {
+    return this.spikes.find(spikes => {
+      const rect = spikes.getBounds();
+      return rect.contains(x, y);
+    })
+  }
+
+  private createSpikeAnimations() {
+    this.anims.create({
+      key: 'extend',
+      frames: this.anims.generateFrameNumbers("character", {
+        start: 353,
+        end: 356
+      }),
+      frameRate: 10
+    })
+    this.anims.create({
+      key: 'retract',
+      frames: this.anims.generateFrameNumbers("character", {
+        start: 356,
+        end: 353
+      }),
+      frameRate: 10
+    })
+  }
+
+  private spikeTween1() {
+    if (this.tweens.isTweening(this.spikesAlternating1!)) return undefined;
   }
 }
