@@ -4,6 +4,7 @@ export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
   private boxes: Phaser.GameObjects.Sprite[] = [];
+  private barriers: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' | 'up' | 'down' = 'right';
   constructor() {
@@ -35,7 +36,7 @@ export default class Game extends Phaser.Scene {
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 11, 83, 11, 11, 400, 11, 11, 11, 11, 11, 11, 25],
+      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 49, 11, 11, 11, 11, 11, 11, 83, 11, 11, 11, 15],
@@ -51,6 +52,10 @@ export default class Game extends Phaser.Scene {
 
     const tiles = map.addTilesetImage('tiles');
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
+
+    this.barriers = this.layer
+      .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
+      .map(barrier => barrier.setOrigin(0));
 
     this.boxes = this.layer
       .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
@@ -75,12 +80,12 @@ export default class Game extends Phaser.Scene {
     const justUp = Phaser.Input.Keyboard.JustDown(this.cursors.up!);
 
     if (justRight) {
-      // players next coords
       if (!this.player) return;
       if (this.facing === 'left') {
         this.player.toggleFlipX();
         this.facing = 'right';
       }
+      // players next coords
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'positive');
@@ -114,47 +119,46 @@ export default class Game extends Phaser.Scene {
   ) {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
-    // if next move has wall escape early
-    if (this.hasObstructionAt(x, y)) return undefined;
 
-    const PIXELS = 16;
+    // if next move has wall escape early
+    if (this.hasObstruction(x, y)) return undefined;
 
     const directionXY = {
-      positive: `+=${PIXELS}`,
-      negative: `-=${PIXELS}`,
+      positive: '+=16',
+      negative: '-=16',
     };
 
     // move box
     const box = this.getBoxAt(x, y);
 
+    const baseTween = {
+      [axis]: directionXY[direction],
+      duration: 400,
+      onStart: () => {
+        this.player?.anims.play('move', true);
+      },
+      onComplete: () => {
+        this.player?.anims.play('idle', true);
+      },
+      onCompleteScope: this,
+    };
+
     if (box) {
-      if (!this.checkBoxMovement(box, axis, direction, PIXELS)) {
+      if (this.tweens.isTweening(box)) {
+        return undefined;
+      }
+      if (!this.checkBoxMovement(box, axis, direction)) {
         return undefined;
       }
       this.tweens.add({
+        ...baseTween,
         targets: box,
-        [axis]: directionXY[direction],
-        duration: 500,
-        onStart: () => {
-          this.player?.anims.play('move', true);
-        },
-        onComplete: () => {
-          this.player?.anims.play('idle', true);
-        },
       });
     } else {
       // move player
       this.tweens.add({
-        onStart: () => {
-          this.player?.anims.play('move', true);
-        },
+        ...baseTween,
         targets: this.player,
-        [axis]: directionXY[direction],
-        duration: 500,
-        onComplete: () => {
-          this.player?.anims.play('idle', true);
-        },
-        onCompleteScope: this,
       });
     }
   }
@@ -163,32 +167,44 @@ export default class Game extends Phaser.Scene {
   private checkBoxMovement(
     box: Phaser.GameObjects.Sprite,
     axis: string,
-    direction: string,
-    value: number
+    direction: string
   ) {
     if (axis === 'x' && direction === 'negative') {
-      if (this.hasObstructionAt(box.getBounds().x - value, box.getBounds().y)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x - 8, box.getBounds().y + 8)
+      ) {
         return false;
       }
     } else if (axis === 'x' && direction === 'positive') {
-      if (this.hasObstructionAt(box.getBounds().x + value, box.getBounds().y)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x + 24, box.getBounds().y + 8)
+      ) {
         return false;
       }
     } else if (axis === 'y' && direction === 'negative') {
-      if (this.hasObstructionAt(box.getBounds().x, box.getBounds().y - value)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x + 8, box.getBounds().y - 8)
+      ) {
         return false;
       }
     } else if (axis === 'y' && direction === 'positive') {
-      if (this.hasObstructionAt(box.getBounds().x, box.getBounds().y + value)) {
+      if (
+        this.hasObjectObstruction(box.getBounds().x + 8, box.getBounds().y + 24)
+      ) {
         return false;
       }
     }
     return true;
   }
 
-  private hasObstructionAt(x: number, y: number) {
+  private hasObstruction(x: number, y: number) {
     if (!this.layer) {
       return false;
+    }
+
+    const barrier = this.getBarrierAt(x, y);
+    if (barrier) {
+      return true;
     }
 
     const tile = this.layer.getTileAtWorldXY(x, y);
@@ -197,9 +213,22 @@ export default class Game extends Phaser.Scene {
     return obstructions.indexOf(tile.index) !== -1;
   }
 
+  private hasObjectObstruction(x: number, y: number) {
+    if (this.hasObstruction(x, y) || this.getBoxAt(x, y)) {
+      return true;
+    }
+  }
+
   private getBoxAt(x: number, y: number) {
     return this.boxes.find(box => {
       const rect = box.getBounds();
+      return rect.contains(x, y);
+    });
+  }
+
+  private getBarrierAt(x: number, y: number) {
+    return this.barriers.find(barrier => {
+      const rect = barrier.getBounds();
       return rect.contains(x, y);
     });
   }
