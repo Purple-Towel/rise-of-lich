@@ -80,12 +80,12 @@ export default class Game extends Phaser.Scene {
     const justUp = Phaser.Input.Keyboard.JustDown(this.cursors.up!);
 
     if (justRight) {
-      // players next coords
       if (!this.player) return;
       if (this.facing === 'left') {
         this.player.toggleFlipX();
         this.facing = 'right';
       }
+      // players next coords
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'positive');
@@ -123,15 +123,25 @@ export default class Game extends Phaser.Scene {
     // if next move has wall escape early
     if (this.hasObstruction(x, y)) return undefined;
 
-    const PIXELS = 16;
-
     const directionXY = {
-      positive: `+=${PIXELS}`,
-      negative: `-=${PIXELS}`,
+      positive: '+=16',
+      negative: '-=16',
     };
 
     // move box
     const box = this.getBoxAt(x, y);
+
+    const baseTween = {
+      [axis]: directionXY[direction],
+      duration: 400,
+      onStart: () => {
+        this.player?.anims.play('move', true);
+      },
+      onComplete: () => {
+        this.player?.anims.play('idle', true);
+      },
+      onCompleteScope: this,
+    };
 
     if (box) {
       if (this.tweens.isTweening(box)) {
@@ -141,30 +151,14 @@ export default class Game extends Phaser.Scene {
         return undefined;
       }
       this.tweens.add({
+        ...baseTween,
         targets: box,
-        [axis]: directionXY[direction],
-        duration: 400,
-        onStart: () => {
-          this.player?.anims.play('move', true);
-        },
-        onComplete: () => {
-          this.player?.anims.play('idle', true);
-        },
-        onCompleteScope: this,
       });
     } else {
       // move player
       this.tweens.add({
-        onStart: () => {
-          this.player?.anims.play('move', true);
-        },
+        ...baseTween,
         targets: this.player,
-        [axis]: directionXY[direction],
-        duration: 400,
-        onComplete: () => {
-          this.player?.anims.play('idle', true);
-        },
-        onCompleteScope: this,
       });
     }
   }
@@ -208,7 +202,7 @@ export default class Game extends Phaser.Scene {
       return false;
     }
 
-    const barrier = this.getObstructionAt(x, y);
+    const barrier = this.getBarrierAt(x, y);
     if (barrier) {
       return true;
     }
@@ -232,13 +226,11 @@ export default class Game extends Phaser.Scene {
     });
   }
 
-  private getObstructionAt(x: number, y: number) {
-    const barrier = this.barriers.find(barrier => {
+  private getBarrierAt(x: number, y: number) {
+    return this.barriers.find(barrier => {
       const rect = barrier.getBounds();
       return rect.contains(x, y);
     });
-
-    return barrier;
   }
 
   private createPlayerAnimations() {
