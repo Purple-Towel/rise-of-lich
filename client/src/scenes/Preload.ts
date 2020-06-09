@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import WebFontLoader from '../game_components/WebFontLoader';
 
 export default class Preload extends Phaser.Scene {
   constructor() {
@@ -19,9 +20,17 @@ export default class Preload extends Phaser.Scene {
         startFrame: 0,
       }
     );
+
+    this.load.spritesheet('lich', 'assets/demon-idle.png', {
+      frameWidth: 160,
+      frameHeight: 140,
+    });
+
+    const fonts = new WebFontLoader(this.load, ['Metal Mania']);
+    this.load.addFile(fonts);
   }
 
   create() {
-    this.scene.start('game', { currentLevel: 1 });
+    this.scene.start('intro');
   }
 }
