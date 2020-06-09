@@ -194,6 +194,13 @@ export default class Game extends Phaser.Scene {
         targets: this.player,
       });
     }
+
+    //check if square is spike
+    const spike = this.getSpikeAt(x, y);
+
+    if (spike) {
+      return this.moves -= 1;
+    }
   }
 
   // checks if box is being moved into an obstruction
