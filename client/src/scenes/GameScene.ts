@@ -7,11 +7,14 @@ export default class Game extends Phaser.Scene {
   private boxes: Phaser.GameObjects.Sprite[] = [];
   private spikes: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
+  private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
   private barriers: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' | 'up' | 'down' = 'right';
   private moves = 50;
+  private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
+  private stepsText?: Phaser.GameObjects.Text;
   // private canvas?: Phaser.s
   // private movesLeft?: movesLeft;
   constructor() {
@@ -45,7 +48,7 @@ export default class Game extends Phaser.Scene {
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 777, 778, 11, 11, 25],
+      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 777, 778, 779, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 49, 11, 11, 11, 11, 11, 11, 83, 11, 11, 11, 15],
@@ -73,6 +76,10 @@ export default class Game extends Phaser.Scene {
       this.spikesAlternating1 = this.layer
       .createFromTiles(778, 11, {key: 'character', frame: 353})
       .map(spikeAlternating1 => spikeAlternating1.setOrigin(0))
+      
+      this.spikesAlternating2 = this.layer
+      .createFromTiles(779, 11, {key: 'character', frame: 356})
+      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0))
 
     this.boxes = this.layer
       .createFromTiles(83, 11, { key: "tiles", frame: 83 })
@@ -83,15 +90,15 @@ export default class Game extends Phaser.Scene {
       .pop();
 
     this.player?.setOrigin(0);
-    this.createPlayerAnimations()
-    this.createSpikeAnimations();
     this.createPlayerAnimations();
+    this.createSpikeAnimations();
 
     this.movesText = this.add.text(16, 170, `Moves: ${this.moves}`, {
       fontSize: "16px",
       fill: "#f00",
     });
     this.movesText.setShadow(1, 1);
+    this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
   }
 
   update() {
@@ -115,7 +122,9 @@ export default class Game extends Phaser.Scene {
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, "x", "positive");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
+      this.steps += 1;
+      this.movesText?.setText(`Moves: ${this.moves}`)
+      this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
       if (!this.player) return;
       if (this.facing === 'right') {
@@ -126,21 +135,27 @@ export default class Game extends Phaser.Scene {
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, "x", "negative");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
+      this.steps += 1;
+      this.movesText?.setText(`Moves: ${this.moves}`);
+      this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
     } else if (justDown) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y + 24;
       this.tweenMove(nx, ny, "y", "positive");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
+      this.steps += 1;
+      this.movesText?.setText(`Moves: ${this.moves}`)
+      this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justUp) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y - 8;
       this.tweenMove(nx, ny, "y", "negative");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
+      this.steps += 1;
+      this.movesText?.setText(`Moves: ${this.moves}`);
+      this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
     }
   }
 
@@ -200,6 +215,22 @@ export default class Game extends Phaser.Scene {
 
     if (spike) {
       return this.moves -= 1;
+    }
+
+    // check if square is alternating spike
+    const spikeAlternating1 = this.getSpikeAlternating1(x,y);
+    const spikeAlternating2 = this.getSpikeAlternating2(x,y);
+    if (spikeAlternating1) {
+      const canHurt = this.canSpikeAlternating1Hurt();
+      if (canHurt) {
+        return this.moves -= 1;
+      }
+    }
+    if (spikeAlternating2) {
+      const canHurt = this.canSpikeAlternating2Hurt();
+      if (canHurt) {
+        return this.moves -= 1;
+      }
     }
   }
 
@@ -298,6 +329,32 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  private getSpikeAlternating1(x:number, y:number) {
+    return this.spikesAlternating1.find(spikesAlternating1 => {
+      const rect = spikesAlternating1.getBounds();
+      return rect.contains(x, y);
+    })
+  }
+
+  private getSpikeAlternating2(x:number, y:number) {
+    return this.spikesAlternating2.find(spikesAlternating2 => {
+      const rect = spikesAlternating2.getBounds();
+      return rect.contains(x, y);
+    })
+  }
+
+  private canSpikeAlternating1Hurt() {
+    if (this.steps % 2 === 1) {
+      return true;
+    } else return false;
+  }
+
+  private canSpikeAlternating2Hurt() {
+    if (this.steps % 2 === 0) {
+      return true;
+    } else return false;
+  }
+
   private createSpikeAnimations() {
     this.anims.create({
       key: 'extend',
@@ -315,9 +372,5 @@ export default class Game extends Phaser.Scene {
       }),
       frameRate: 10
     })
-  }
-
-  private spikeTween1() {
-    if (this.tweens.isTweening(this.spikesAlternating1!)) return undefined;
   }
 }
