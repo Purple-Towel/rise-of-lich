@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import level1 from '../game_components/levels/level1';
+import level2 from '../game_components/levels/level2';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -7,45 +9,21 @@ export default class Game extends Phaser.Scene {
   private barriers: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' | 'up' | 'down' = 'right';
+  private levels = [level1, level2];
+  private currentLevel: number = 1;
   constructor() {
     super('game');
   }
 
   preload() {
-    this.load.spritesheet('tiles', 'assets/Dungeon_Tileset.png', {
-      frameWidth: 16,
-      startFrame: 0,
-    });
-
-    this.load.spritesheet(
-      'character',
-      'assets/0x72_DungeonTilesetII_v1.3.png',
-      {
-        frameWidth: 16,
-        startFrame: 0,
-      }
-    );
-
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
-  create() {
-    const level = [
-      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5],
-      [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 49, 11, 11, 11, 11, 11, 11, 83, 11, 11, 11, 15],
-      [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [40, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 45],
-    ];
+  create(d: { currentLevel: number }) {
+    const { currentLevel } = d;
+    this.currentLevel = currentLevel;
     const map = this.make.tilemap({
-      data: level,
+      data: this.levels[this.currentLevel - 1].map,
       tileWidth: 16,
       tileHeight: 16,
     });
@@ -123,12 +101,17 @@ export default class Game extends Phaser.Scene {
     // if next move has wall escape early
     if (this.hasObstruction(x, y)) return undefined;
 
+    // if you reach the finishing tile, start the next scene
+    if (this.getTileAt(x, y, 39)) {
+      this.currentLevel++;
+      this.scene.start('game', { currentLevel: this.currentLevel });
+    }
+
     const directionXY = {
       positive: '+=16',
       negative: '-=16',
     };
 
-    // move box
     const box = this.getBoxAt(x, y);
 
     const baseTween = {
@@ -144,6 +127,7 @@ export default class Game extends Phaser.Scene {
     };
 
     if (box) {
+      // move box
       if (this.tweens.isTweening(box)) {
         return undefined;
       }
@@ -197,6 +181,7 @@ export default class Game extends Phaser.Scene {
     return true;
   }
 
+  // returns whether or not any sprite is moving into an obstruction
   private hasObstruction(x: number, y: number) {
     if (!this.layer) {
       return false;
@@ -213,12 +198,15 @@ export default class Game extends Phaser.Scene {
     return obstructions.indexOf(tile.index) !== -1;
   }
 
+  // returns whether or not a moveable object has an obstruction based
+  // on the x and y coords the sprite is pushing it
   private hasObjectObstruction(x: number, y: number) {
     if (this.hasObstruction(x, y) || this.getBoxAt(x, y)) {
       return true;
     }
   }
 
+  // returns moveable box based on x & y coords
   private getBoxAt(x: number, y: number) {
     return this.boxes.find(box => {
       const rect = box.getBounds();
@@ -226,11 +214,23 @@ export default class Game extends Phaser.Scene {
     });
   }
 
+  // returns a barrier of movement based on x & y coords
   private getBarrierAt(x: number, y: number) {
     return this.barriers.find(barrier => {
       const rect = barrier.getBounds();
       return rect.contains(x, y);
     });
+  }
+
+  // gets any tile you specify based on the index it is in the tilesheet
+  private getTileAt(x: number, y: number, index: number) {
+    if (!this.layer) return undefined;
+
+    const tile = this.layer.getTileAtWorldXY(x, y);
+    if (!tile) return false;
+    if (tile.index === index) {
+      return tile;
+    }
   }
 
   private createPlayerAnimations() {
