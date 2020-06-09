@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import Phaser from 'phaser';
 import Game from './scenes/GameScene';
 import Preload from './scenes/Preload';
+import Intro from './scenes/Intro';
 
 const config = {
   type: Phaser.AUTO,
@@ -19,7 +20,7 @@ const config = {
       gravity: { y: 0 },
     },
   },
-  scene: [Preload, Game],
+  scene: [Preload, Intro, Game],
   scale: {
     zoom: 3,
   },
