@@ -29,9 +29,10 @@ export default class Game extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
-  create(d: { currentLevel: number }) {
-    const { currentLevel } = d;
+  create(d: { currentLevel: number; steps: number }) {
+    const { currentLevel, steps } = d;
     this.currentLevel = currentLevel;
+    this.steps = steps;
     const map = this.make.tilemap({
       data: this.levels[this.currentLevel - 1].map,
       tileWidth: 16,
@@ -159,7 +160,7 @@ export default class Game extends Phaser.Scene {
       setTimeout(() => {
         this.scene.start('transition', {
           currentLevel: this.currentLevel,
-          staminaUsed: moves - this.moves,
+          stepsTaken: this.steps,
         });
       }, 700);
     }
