@@ -2,6 +2,10 @@ import Phaser from 'phaser';
 // import movesLeft from "../helpers/movesLeft";
 import level1 from '../game_components/levels/level1';
 import level2 from '../game_components/levels/level2';
+import level3 from '../game_components/levels/level3';
+import level4 from '../game_components/levels/level4';
+import level5 from '../game_components/levels/level5';
+//import ending from '../game_components/levels/ending';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -19,7 +23,7 @@ export default class Game extends Phaser.Scene {
   private stepsText?: Phaser.GameObjects.Text;
   // private canvas?: Phaser.s
   // private movesLeft?: movesLeft;
-  private levels = [level1, level2];
+  private levels = [level1, level2, level3, level4, level5];
   private currentLevel: number = 1;
   constructor() {
     super('game');
@@ -86,7 +90,7 @@ export default class Game extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
-    if (this.moves === 0) {
+    if (this.moves <= 0) {
       this.scene.start('gameOver', { currentLevel: this.currentLevel });
     }
 
