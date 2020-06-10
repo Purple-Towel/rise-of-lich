@@ -105,10 +105,6 @@ export default class Game extends Phaser.Scene {
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'positive');
-      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      // this.steps += 1;
-      // this.movesText?.setText(`Moves: ${this.moves}`);
-      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
       if (!this.player) return;
       if (this.facing === 'right') {
@@ -118,28 +114,16 @@ export default class Game extends Phaser.Scene {
       const nx = this.player.x - 8;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, 'x', 'negative');
-      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      // this.steps += 1;
-      // this.movesText?.setText(`Moves: ${this.moves}`);
-      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justDown) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y + 24;
       this.tweenMove(nx, ny, 'y', 'positive');
-      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      // this.steps += 1;
-      // this.movesText?.setText(`Moves: ${this.moves}`);
-      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justUp) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y - 8;
       this.tweenMove(nx, ny, 'y', 'negative');
-      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      // this.steps += 1;
-      // this.movesText?.setText(`Moves: ${this.moves}`);
-      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     }
   }
 
