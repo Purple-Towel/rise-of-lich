@@ -47,8 +47,8 @@ export default class Game extends Phaser.Scene {
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
-      [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
-      [10, 11, 11, 11, 49, 83, 11, 11, 400, 11, 11, 777, 778, 779, 11, 25],
+      [0, 11, 11, 11, 11, 11, 11, 778, 11, 779, 11, 11, 11, 11, 11, 15],
+      [10, 11, 11, 11, 49, 83, 11, 779, 400, 778, 11, 777, 11, 11, 11, 25],
       [0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 15],
       [10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 25],
       [0, 11, 11, 11, 49, 11, 11, 11, 11, 11, 11, 83, 11, 11, 11, 15],
@@ -217,18 +217,37 @@ export default class Game extends Phaser.Scene {
       return this.moves -= 1;
     }
 
+    if (this.steps % 2 === 0) {
+      for (let sprite of this.spikesAlternating1) {
+        sprite.anims.play("extend");
+      }
+      for (let sprite of this.spikesAlternating2) {
+        sprite.anims.play("retract");
+      }
+    }
+
+    if (this.steps % 2 === 1) {
+      for (let sprite of this.spikesAlternating1) {
+        sprite.anims.play("retract");
+      }
+      for (let sprite of this.spikesAlternating2) {
+        sprite.anims.play("extend");
+      }
+    }
+
+
     // check if square is alternating spike
     const spikeAlternating1 = this.getSpikeAlternating1(x,y);
     const spikeAlternating2 = this.getSpikeAlternating2(x,y);
     if (spikeAlternating1) {
-      const canHurt = this.canSpikeAlternating1Hurt();
-      if (canHurt) {
+      const canHurt1 = this.canSpikeAlternating1Hurt();
+      if (canHurt1) {
         return this.moves -= 1;
       }
     }
     if (spikeAlternating2) {
-      const canHurt = this.canSpikeAlternating2Hurt();
-      if (canHurt) {
+      const canHurt2 = this.canSpikeAlternating2Hurt();
+      if (canHurt2) {
         return this.moves -= 1;
       }
     }
@@ -344,13 +363,13 @@ export default class Game extends Phaser.Scene {
   }
 
   private canSpikeAlternating1Hurt() {
-    if (this.steps % 2 === 1) {
+    if (this.steps % 2 === 0) {
       return true;
     } else return false;
   }
 
   private canSpikeAlternating2Hurt() {
-    if (this.steps % 2 === 0) {
+    if (this.steps % 2 === 1) {
       return true;
     } else return false;
   }
