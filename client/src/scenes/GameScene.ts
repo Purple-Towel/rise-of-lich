@@ -92,6 +92,7 @@ export default class Game extends Phaser.Scene {
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
       this.tweenMove(nx, ny, "x", "positive");
+      // this.decrementMoves();
       this.moves += 1; //! REPLACE THIS WITH CLASS METHOD
       this.movesText?.setText(`Moves: ${this.moves}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
