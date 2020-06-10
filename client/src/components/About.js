@@ -1,6 +1,6 @@
 import React from 'react';
 
-function About() {
+const About = () => {
   const paragraph = `
   Welcome to Rise of Lich: Revengeance! We are Angad, Diogo, and Rance and we built this
   game as a final project for the Canadian coding bootcamp known as Lighthouse Labs. Rise of Lich
@@ -12,28 +12,8 @@ function About() {
     <div>
       <h1>About</h1>
       <p>{paragraph}</p>
-      <ul>
-        <li>
-          <a>
-            <img src="/assets/logo.png"></img>
-          </a>
-        </li>
-      </ul>
-      <div>
-        Icons made by{' '}
-        <a
-          href="https://www.flaticon.com/authors/pixel-perfect"
-          title="Pixel perfect"
-        >
-          Pixel perfect
-        </a>{' '}
-        from{' '}
-        <a href="https://www.flaticon.com/" title="Flaticon">
-          www.flaticon.com
-        </a>
-      </div>
     </div>
   );
-}
+};
 
 export default About;
