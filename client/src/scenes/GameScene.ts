@@ -72,9 +72,10 @@ export default class Game extends Phaser.Scene {
     this.createPlayerAnimations();
     this.createSpikeAnimations();
 
-    this.movesText = this.add.text(16, 170, `Moves: ${this.moves}`, {
-      fontSize: '16px',
-      fill: '#f00',
+    this.add.image(16, 16, 'hud-icon');
+    this.movesText = this.add.text(8, 8, `${this.moves}`, {
+      fontSize: "14px",
+      fill: "#f00",
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
@@ -179,7 +180,7 @@ export default class Game extends Phaser.Scene {
         this.player?.anims.play('move', true);
         this.moves -= 1;
         this.steps += 1;
-        this.movesText?.setText(`Moves: ${this.moves}`);
+        this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
       },
       onComplete: () => {

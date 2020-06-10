@@ -32,6 +32,11 @@ export default class Preload extends Phaser.Scene {
     });
     const fonts = new WebFontLoader(this.load, ['Metal Mania']);
     this.load.addFile(fonts);
+  
+    this.load.spritesheet('hud-icon', 'assets/hud-icon.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
   }
 
   create() {
