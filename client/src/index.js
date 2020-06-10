@@ -9,6 +9,7 @@ import Game from './scenes/GameScene';
 import Preload from './scenes/Preload';
 import Intro from './scenes/Intro';
 import GameOver from './scenes/GameOver';
+import Transition from './scenes/Transition';
 
 const config = {
   type: Phaser.AUTO,
@@ -21,7 +22,7 @@ const config = {
       gravity: { y: 0 },
     },
   },
-  scene: [Preload, Intro, Game, GameOver],
+  scene: [Preload, Intro, Game, GameOver, Transition],
   scale: {
     zoom: 3,
   },
