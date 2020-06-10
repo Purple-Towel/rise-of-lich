@@ -154,8 +154,14 @@ export default class Game extends Phaser.Scene {
 
     // if you reach the finishing tile, start the next scene
     if (this.getTileAt(x, y, 39)) {
+      const moves = this.levels[this.currentLevel - 1].moves;
       this.currentLevel++;
-      this.scene.start('game', { currentLevel: this.currentLevel });
+      setTimeout(() => {
+        this.scene.start('transition', {
+          currentLevel: this.currentLevel,
+          staminaUsed: moves - this.moves,
+        });
+      }, 700);
     }
 
     const directionXY = {
