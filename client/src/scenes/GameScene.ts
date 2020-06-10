@@ -69,8 +69,9 @@ export default class Game extends Phaser.Scene {
     this.createPlayerAnimations();
     this.createSpikeAnimations();
 
-    this.movesText = this.add.text(16, 170, `Moves: ${this.moves}`, {
-      fontSize: "16px",
+    this.add.image(16, 16, 'hud-icon');
+    this.movesText = this.add.text(8, 8, `${this.moves}`, {
+      fontSize: "14px",
       fill: "#f00",
     });
     this.movesText.setShadow(1, 1);
@@ -99,7 +100,7 @@ export default class Game extends Phaser.Scene {
       this.tweenMove(nx, ny, "x", "positive");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
       this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`)
+      this.movesText?.setText(`${this.moves}`)
       this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
       if (!this.player) return;
@@ -112,7 +113,7 @@ export default class Game extends Phaser.Scene {
       this.tweenMove(nx, ny, "x", "negative");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
       this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`);
+      this.movesText?.setText(`${this.moves}`);
       this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
     } else if (justDown) {
       if (!this.player) return;
@@ -121,7 +122,7 @@ export default class Game extends Phaser.Scene {
       this.tweenMove(nx, ny, "y", "positive");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
       this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`)
+      this.movesText?.setText(`${this.moves}`)
       this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justUp) {
       if (!this.player) return;
@@ -130,7 +131,7 @@ export default class Game extends Phaser.Scene {
       this.tweenMove(nx, ny, "y", "negative");
       this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
       this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`);
+      this.movesText?.setText(`${this.moves}`);
       this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
     }
   }
