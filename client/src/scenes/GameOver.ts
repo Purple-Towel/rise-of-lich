@@ -46,7 +46,7 @@ export default class GameOver extends Phaser.Scene {
     this.input.keyboard.once(
       'keydown-R',
       () => {
-        this.scene.start('game', { currentLevel: this.currentLevel });
+        this.scene.start('game', { currentLevel: this.currentLevel, steps: 0 });
       },
       this
     );

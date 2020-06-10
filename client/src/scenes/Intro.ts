@@ -40,7 +40,7 @@ export default class Intro extends Phaser.Scene {
     this.input.keyboard.once(
       'keydown-ENTER',
       () => {
-        this.scene.start('game', { currentLevel: 1, moves: 50 });
+        this.scene.start('game', { currentLevel: 1, steps: 0 });
       },
       this
     );

@@ -6,8 +6,8 @@ export default class Transition extends Phaser.Scene {
     super('transition');
   }
 
-  create(d: { currentLevel: number; staminaUsed: number }) {
-    const { currentLevel, staminaUsed } = d;
+  create(d: { currentLevel: number; stepsTaken: number }) {
+    const { currentLevel, stepsTaken } = d;
 
     const width = this.scale.width;
     const height = this.scale.height;
@@ -21,7 +21,7 @@ export default class Transition extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(width * 0.5, height * 0.5, `Stamina Used: ${staminaUsed}`, {
+      .text(width * 0.5, height * 0.5, `Steps taken: ${stepsTaken}`, {
         fontSize: 16,
         fontFamily: 'Metal Mania',
         color: '#f00',
@@ -46,14 +46,14 @@ export default class Transition extends Phaser.Scene {
     this.input.keyboard.once(
       'keydown-R',
       () => {
-        this.scene.start('game', { currentLevel: currentLevel - 1 });
+        this.scene.start('game', { currentLevel: currentLevel - 1, steps: 0 });
       },
       this
     );
     this.input.keyboard.once(
       'keydown-ENTER',
       () => {
-        this.scene.start('game', { currentLevel: currentLevel });
+        this.scene.start('game', { currentLevel: currentLevel, steps: 0 });
       },
       this
     );
