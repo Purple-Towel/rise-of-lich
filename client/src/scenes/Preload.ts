@@ -7,6 +7,11 @@ export default class Preload extends Phaser.Scene {
   }
 
   preload() {
+    this.load.spritesheet('ghost-idle', 'assets/ghost-idle.png', {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+
     this.load.spritesheet('tiles', 'assets/Dungeon_Tileset.png', {
       frameWidth: 16,
       startFrame: 0,
@@ -25,7 +30,6 @@ export default class Preload extends Phaser.Scene {
       frameWidth: 160,
       frameHeight: 140,
     });
-
     const fonts = new WebFontLoader(this.load, ['Metal Mania']);
     this.load.addFile(fonts);
   }

@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 // import movesLeft from "../helpers/movesLeft";
 import level1 from '../game_components/levels/level1';
 import level2 from '../game_components/levels/level2';
@@ -13,7 +13,7 @@ export default class Game extends Phaser.Scene {
   private barriers: Phaser.GameObjects.Sprite[] = [];
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' | 'up' | 'down' = 'right';
-  private moves = 50;
+  private moves: number = 50;
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
   private stepsText?: Phaser.GameObjects.Text;
@@ -22,7 +22,7 @@ export default class Game extends Phaser.Scene {
   private levels = [level1, level2];
   private currentLevel: number = 1;
   constructor() {
-    super("game");
+    super('game');
   }
 
   preload() {
@@ -38,31 +38,33 @@ export default class Game extends Phaser.Scene {
       tileHeight: 16,
     });
 
-    const tiles = map.addTilesetImage("tiles");
+    this.moves = this.levels[this.currentLevel - 1].moves;
+
+    const tiles = map.addTilesetImage('tiles');
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
     this.barriers = this.layer
       .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
       .map(barrier => barrier.setOrigin(0));
 
-      this.spikes = this.layer
-      .createFromTiles(777, 11, {key: 'character', frame: 356})
-      .map(spike => spike.setOrigin(0))
+    this.spikes = this.layer
+      .createFromTiles(777, 11, { key: 'character', frame: 356 })
+      .map(spike => spike.setOrigin(0));
 
-      this.spikesAlternating1 = this.layer
-      .createFromTiles(778, 11, {key: 'character', frame: 353})
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0))
-      
-      this.spikesAlternating2 = this.layer
-      .createFromTiles(779, 11, {key: 'character', frame: 356})
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0))
+    this.spikesAlternating1 = this.layer
+      .createFromTiles(778, 11, { key: 'character', frame: 353 })
+      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
+
+    this.spikesAlternating2 = this.layer
+      .createFromTiles(779, 11, { key: 'character', frame: 356 })
+      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
 
     this.boxes = this.layer
-      .createFromTiles(83, 11, { key: "tiles", frame: 83 })
-      .map((box) => box.setOrigin(0));
+      .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
+      .map(box => box.setOrigin(0));
 
     this.player = this.layer
-      .createFromTiles(400, 11, { key: "character", frame: 40 })
+      .createFromTiles(400, 11, { key: 'character', frame: 40 })
       .pop();
 
     this.player?.setOrigin(0);
@@ -70,8 +72,8 @@ export default class Game extends Phaser.Scene {
     this.createSpikeAnimations();
 
     this.movesText = this.add.text(16, 170, `Moves: ${this.moves}`, {
-      fontSize: "16px",
-      fill: "#f00",
+      fontSize: '16px',
+      fill: '#f00',
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
@@ -80,6 +82,9 @@ export default class Game extends Phaser.Scene {
   update() {
     if (!this.cursors) {
       return;
+    }
+    if (this.moves === 0) {
+      this.scene.start('gameOver', { currentLevel: this.currentLevel });
     }
 
     const justLeft = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
@@ -96,11 +101,11 @@ export default class Game extends Phaser.Scene {
       // players next coords
       const nx = this.player.x + 24;
       const ny = this.player.y + 8;
-      this.tweenMove(nx, ny, "x", "positive");
-      this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`)
-      this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
+      this.tweenMove(nx, ny, 'x', 'positive');
+      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
+      // this.steps += 1;
+      // this.movesText?.setText(`Moves: ${this.moves}`);
+      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justLeft) {
       if (!this.player) return;
       if (this.facing === 'right') {
@@ -109,29 +114,29 @@ export default class Game extends Phaser.Scene {
       }
       const nx = this.player.x - 8;
       const ny = this.player.y + 8;
-      this.tweenMove(nx, ny, "x", "negative");
-      this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`);
-      this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
+      this.tweenMove(nx, ny, 'x', 'negative');
+      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
+      // this.steps += 1;
+      // this.movesText?.setText(`Moves: ${this.moves}`);
+      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justDown) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y + 24;
-      this.tweenMove(nx, ny, "y", "positive");
-      this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`)
-      this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
+      this.tweenMove(nx, ny, 'y', 'positive');
+      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
+      // this.steps += 1;
+      // this.movesText?.setText(`Moves: ${this.moves}`);
+      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     } else if (justUp) {
       if (!this.player) return;
       const nx = this.player.x + 8;
       const ny = this.player.y - 8;
-      this.tweenMove(nx, ny, "y", "negative");
-      this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
-      this.steps += 1;
-      this.movesText?.setText(`Moves: ${this.moves}`);
-      this.stepsText?.setText(`Steps: ${this.steps}`) //! REPLACE THIS WITH CLASS METHOD
+      this.tweenMove(nx, ny, 'y', 'negative');
+      // this.moves -= 1; //! REPLACE THIS WITH CLASS METHOD
+      // this.steps += 1;
+      // this.movesText?.setText(`Moves: ${this.moves}`);
+      // this.stepsText?.setText(`Steps: ${this.steps}`); //! REPLACE THIS WITH CLASS METHOD
     }
   }
 
@@ -139,7 +144,7 @@ export default class Game extends Phaser.Scene {
     x: number,
     y: number,
     axis: string,
-    direction: "positive" | "negative"
+    direction: 'positive' | 'negative'
   ) {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
@@ -164,10 +169,14 @@ export default class Game extends Phaser.Scene {
       [axis]: directionXY[direction],
       duration: 400,
       onStart: () => {
-        this.player?.anims.play("move", true);
+        this.player?.anims.play('move', true);
+        this.moves -= 1;
+        this.steps += 1;
+        this.movesText?.setText(`Moves: ${this.moves}`);
+        this.stepsText?.setText(`Steps: ${this.steps}`);
       },
       onComplete: () => {
-        this.player?.anims.play("idle", true);
+        this.player?.anims.play('idle', true);
       },
       onCompleteScope: this,
     };
@@ -196,41 +205,40 @@ export default class Game extends Phaser.Scene {
     const spike = this.getSpikeAt(x, y);
 
     if (spike) {
-      return this.moves -= 1;
+      return (this.moves -= 1);
     }
 
     if (this.steps % 2 === 0) {
       for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play("extend");
+        sprite.anims.play('extend');
       }
       for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play("retract");
+        sprite.anims.play('retract');
       }
     }
 
     if (this.steps % 2 === 1) {
       for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play("retract");
+        sprite.anims.play('retract');
       }
       for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play("extend");
+        sprite.anims.play('extend');
       }
     }
 
-
     // check if square is alternating spike
-    const spikeAlternating1 = this.getSpikeAlternating1(x,y);
-    const spikeAlternating2 = this.getSpikeAlternating2(x,y);
+    const spikeAlternating1 = this.getSpikeAlternating1(x, y);
+    const spikeAlternating2 = this.getSpikeAlternating2(x, y);
     if (spikeAlternating1) {
       const canHurt1 = this.canSpikeAlternating1Hurt();
       if (canHurt1) {
-        return this.moves -= 1;
+        return (this.moves -= 1);
       }
     }
     if (spikeAlternating2) {
       const canHurt2 = this.canSpikeAlternating2Hurt();
       if (canHurt2) {
-        return this.moves -= 1;
+        return (this.moves -= 1);
       }
     }
   }
@@ -296,7 +304,7 @@ export default class Game extends Phaser.Scene {
 
   // returns moveable box based on x & y coords
   private getBoxAt(x: number, y: number) {
-    return this.boxes.find((box) => {
+    return this.boxes.find(box => {
       const rect = box.getBounds();
       return rect.contains(x, y);
     });
@@ -323,8 +331,8 @@ export default class Game extends Phaser.Scene {
 
   private createPlayerAnimations() {
     this.anims.create({
-      key: "move",
-      frames: this.anims.generateFrameNumbers("character", {
+      key: 'move',
+      frames: this.anims.generateFrameNumbers('character', {
         start: 40,
         end: 43,
       }),
@@ -333,31 +341,31 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: "idle",
-      frames: [{ key: "character", frame: 40 }],
+      key: 'idle',
+      frames: [{ key: 'character', frame: 40 }],
       frameRate: 20,
     });
   }
 
-  private getSpikeAt(x:number, y:number) {
+  private getSpikeAt(x: number, y: number) {
     return this.spikes.find(spikes => {
       const rect = spikes.getBounds();
       return rect.contains(x, y);
-    })
+    });
   }
 
-  private getSpikeAlternating1(x:number, y:number) {
+  private getSpikeAlternating1(x: number, y: number) {
     return this.spikesAlternating1.find(spikesAlternating1 => {
       const rect = spikesAlternating1.getBounds();
       return rect.contains(x, y);
-    })
+    });
   }
 
-  private getSpikeAlternating2(x:number, y:number) {
+  private getSpikeAlternating2(x: number, y: number) {
     return this.spikesAlternating2.find(spikesAlternating2 => {
       const rect = spikesAlternating2.getBounds();
       return rect.contains(x, y);
-    })
+    });
   }
 
   private canSpikeAlternating1Hurt() {
@@ -375,19 +383,19 @@ export default class Game extends Phaser.Scene {
   private createSpikeAnimations() {
     this.anims.create({
       key: 'extend',
-      frames: this.anims.generateFrameNumbers("character", {
+      frames: this.anims.generateFrameNumbers('character', {
         start: 353,
-        end: 356
+        end: 356,
       }),
-      frameRate: 10
-    })
+      frameRate: 10,
+    });
     this.anims.create({
       key: 'retract',
-      frames: this.anims.generateFrameNumbers("character", {
+      frames: this.anims.generateFrameNumbers('character', {
         start: 356,
-        end: 353
+        end: 353,
       }),
-      frameRate: 10
-    })
+      frameRate: 10,
+    });
   }
 }
