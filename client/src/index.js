@@ -6,19 +6,21 @@ import * as serviceWorker from './serviceWorker';
 // import playGame from './phaser/scene';
 import Phaser from 'phaser';
 import Game from './scenes/GameScene';
+import Preload from './scenes/Preload';
+import Intro from './scenes/Intro';
 
 const config = {
   type: Phaser.AUTO,
   width: 256,
   height: 192,
-  parent: "game",
+  parent: 'game',
   physics: {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
     },
   },
-  scene: [Game],
+  scene: [Preload, Intro, Game],
   scale: {
     zoom: 3,
   },
