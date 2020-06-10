@@ -18,6 +18,7 @@ export default class Game extends Phaser.Scene {
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' = 'right';
   private moves: number = 50;
+  private isGameOver: boolean = false;
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
   private stepsText?: Phaser.GameObjects.Text;
@@ -90,8 +91,9 @@ export default class Game extends Phaser.Scene {
     if (!this.cursors) {
       return;
     }
-    if (this.moves <= 0) {
+    if (this.isGameOver === true) {
       this.scene.start('gameOver', { currentLevel: this.currentLevel });
+      this.isGameOver = false;
     }
 
     const justLeft = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
@@ -144,7 +146,7 @@ export default class Game extends Phaser.Scene {
     if (this.hasObstruction(x, y)) return undefined;
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39)) {
+    if (this.getTileAt(x, y, 39) && (this.moves >= 2) && !(this.isGameOver)) {
       const moves = this.levels[this.currentLevel - 1].moves;
       this.currentLevel++;
       setTimeout(() => {
@@ -171,6 +173,9 @@ export default class Game extends Phaser.Scene {
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
+        if (this.moves <= 0) {
+          this.isGameOver = true;
+        }
       },
       onComplete: () => {
         this.player?.anims.play('idle', true);
