@@ -5,3 +5,8 @@ body {
   padding: 0;
   background: #e2c489 url('../assets/paperbg.png');
 }
+
+canvas {
+  border: 8px inset gold;
+  border-radius: 9px;
+}
