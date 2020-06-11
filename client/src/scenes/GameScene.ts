@@ -85,6 +85,31 @@ export default class Game extends Phaser.Scene {
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
+
+    this.input.keyboard.once(
+      'keydown-R',
+      () => {
+        this.add
+          .text(
+            this.scale.width * 0.5,
+            this.scale.height * 0.21,
+            'Restarting...',
+            {
+              fontSize: 16,
+              fontFamily: 'Metal Mania',
+              color: '#f00',
+            }
+          )
+          .setOrigin(0.5);
+        setTimeout(() => {
+          this.scene.start('game', {
+            currentLevel: this.currentLevel,
+            steps: 0,
+          });
+        }, 1000);
+      },
+      this
+    );
   }
 
   update() {
@@ -100,21 +125,6 @@ export default class Game extends Phaser.Scene {
     const justRight = Phaser.Input.Keyboard.JustDown(this.cursors.right!);
     const justDown = Phaser.Input.Keyboard.JustDown(this.cursors.down!);
     const justUp = Phaser.Input.Keyboard.JustDown(this.cursors.up!);
-
-    this.input.keyboard.once(
-      'keydown-R',
-      () => {
-        this.add
-          .text(this.scale.width * 0.5, this.scale.height * 0.5, 'Restarting', {
-            fontSize: 16,
-            fontFamily: 'Metal Mania',
-            color: '#f00',
-          })
-          .setOrigin(0.5);
-        this.scene.start('game', { currentLevel: this.currentLevel, steps: 0 });
-      },
-      this
-    );
 
     if (justRight) {
       if (!this.player) return;

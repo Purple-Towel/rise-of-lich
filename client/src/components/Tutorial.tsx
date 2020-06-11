@@ -45,6 +45,10 @@ const Tutorial = () => {
         character in the corresponding direction. Moving takes Stamina, and once
         you reach 0 Stamina it will be game over.
       </Paragraph>
+      <Paragraph>
+        Reset: Press 'r' at any time to reset the current level back to the
+        beginning.
+      </Paragraph>
     </Container>
   );
 };
