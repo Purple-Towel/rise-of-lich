@@ -19,7 +19,7 @@ const Footer = () => {
   return (
     <GitHubList>
       <Link href="https://github.com/Purple-Towel">
-        <GitHubIcon /> Angad Grewel
+        <GitHubIcon /> Angad Grewal
       </Link>
       <Link href="https://github.com/DPintoLL">
         <GitHubIcon /> Diogo Pinto
