@@ -184,7 +184,7 @@ export default class Game extends Phaser.Scene {
     }
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && !this.isGameOver) {
+    if (this.getTileAt(x, y, 39) && (this.moves >= 2) && !this.isGameOver) {
       this.currentLevel++;
       setTimeout(() => {
         if (this.currentLevel > this.levels.length) {
@@ -214,7 +214,7 @@ export default class Game extends Phaser.Scene {
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
-        if (this.moves <= 0 && !this.getTileAt(x, y, 39)) {
+        if (this.moves <= 0) {
           this.isGameOver = true;
           this.bgMusic.pause();
           //TODO: Add death sound and tint
