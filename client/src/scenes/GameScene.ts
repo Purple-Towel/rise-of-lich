@@ -5,6 +5,7 @@ import level2 from '../game_components/levels/level2';
 import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
+import damageIndicator from '../helpers/damageIndicator';
 //import ending from '../game_components/levels/ending';
 
 export default class Game extends Phaser.Scene {
@@ -235,12 +236,9 @@ export default class Game extends Phaser.Scene {
     const spike = this.getSpikeAt(x, y);
 
     if (spike) {
-      const flashColor = () => {
-        this.player?.isTinted
-          ? this.player?.clearTint
-          : this.player?.setTint(0xff0000);
-      };
-      const damageIndicator = setInterval(flashColor, 500);
+      if (this.player) {
+        damageIndicator(this.player);
+      }
       return (this.moves -= 1);
     }
 
