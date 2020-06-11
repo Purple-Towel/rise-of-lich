@@ -27,12 +27,21 @@ export default class Game extends Phaser.Scene {
   // private movesLeft?: movesLeft;
   private levels = [level1, level2, level3, level4, level5];
   private currentLevel: number = 1;
+
+  //Todo: Refactor into an object with each sound as keys
+  private bgMusic!: Phaser.Sound.BaseSound;
+  private boxDragSound!: Phaser.Sound.BaseSound;
+  private wallBumpSound!: Phaser.Sound.BaseSound;
+
   constructor() {
     super('game');
   }
 
   preload() {
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.load.audio('bg_music', 'assets/audio/eerie-music.ogg');
+    this.load.audio('audio_box_drag', 'assets/audio/drag-gravel.ogg');
+    this.load.audio('audio_wall_bump', 'assets/audio/wall_bump.ogg');
   }
 
   create(d: { currentLevel: number; steps: number }) {
@@ -86,6 +95,22 @@ export default class Game extends Phaser.Scene {
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
+
+    //-- Audio --
+    //! Declared a config object for tweaking. Most of these are defaults
+    const musicConfig = {
+      mute: false,
+      volume: 0.5,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: false,
+      delay: 0,
+    };
+    this.bgMusic = this.sound.add('bg_music', musicConfig);
+    this.bgMusic.play();
+    this.boxDragSound = this.sound.add('audio_box_drag', { volume: 0.4 });
+    this.wallBumpSound = this.sound.add('audio_wall_bump', { volume: 0.5 });
 
     this.input.keyboard.once(
       'keydown-R',
@@ -169,10 +194,14 @@ export default class Game extends Phaser.Scene {
     if (this.tweens.isTweening(this.player!)) return undefined;
 
     // if next move has wall escape early
-    if (this.hasObstruction(x, y)) return undefined;
+    if (this.hasObstruction(x, y)) {
+      //TODO: Add little shake when player bumps walls
+      this.wallBumpSound.play();
+      return undefined;
+    }
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && !this.isGameOver) {
+    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
       this.currentLevel++;
       setTimeout(() => {
         if (this.currentLevel > this.levels.length) {
@@ -202,8 +231,11 @@ export default class Game extends Phaser.Scene {
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
-        if (this.moves <= 0 && !this.getTileAt(x, y, 39)) {
+        if (this.moves <= 0) {
           this.isGameOver = true;
+          this.bgMusic.pause();
+          //TODO: Add death sound and tint
+          this.player!.setTint(0xff0000);
         }
       },
       onComplete: () => {
@@ -220,6 +252,7 @@ export default class Game extends Phaser.Scene {
       if (!this.checkBoxMovement(box, axis, direction)) {
         return undefined;
       }
+      this.boxDragSound.play();
       this.tweens.add({
         ...baseTween,
         targets: box,

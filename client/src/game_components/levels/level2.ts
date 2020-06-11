@@ -14,6 +14,6 @@ const level2 = {
     [40, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 41, 42, 45],
   ],
 
-  moves: 15,
+  moves: 25,
 };
 export default level2;
