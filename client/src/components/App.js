@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import './App.css';
 import Game from './Game';
-//import Navbar from './Navbar';
 import Button from "./Button";
 import About from "./About";
 import Tutorial from "./Tutorial";
