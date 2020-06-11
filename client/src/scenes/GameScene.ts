@@ -85,6 +85,31 @@ export default class Game extends Phaser.Scene {
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
+
+    this.input.keyboard.once(
+      'keydown-R',
+      () => {
+        this.add
+          .text(
+            this.scale.width * 0.5,
+            this.scale.height * 0.21,
+            'Restarting...',
+            {
+              fontSize: 16,
+              fontFamily: 'Metal Mania',
+              color: '#f00',
+            }
+          )
+          .setOrigin(0.5);
+        setTimeout(() => {
+          this.scene.start('game', {
+            currentLevel: this.currentLevel,
+            steps: 0,
+          });
+        }, 1000);
+      },
+      this
+    );
   }
 
   update() {
@@ -146,7 +171,7 @@ export default class Game extends Phaser.Scene {
     if (this.hasObstruction(x, y)) return undefined;
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && (this.moves >= 2) && !(this.isGameOver)) {
+    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
       const moves = this.levels[this.currentLevel - 1].moves;
       this.currentLevel++;
       setTimeout(() => {
