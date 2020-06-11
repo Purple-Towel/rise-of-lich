@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Divider from '@material-ui/core/Divider';
 
 const Title = styled.h1`
   font-family: 'Metal Mania', cursive;
