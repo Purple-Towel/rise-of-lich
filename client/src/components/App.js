@@ -1,28 +1,22 @@
 import React from 'react';
+import styled from 'styled-components';
 import './App.css';
-import Tutorial from './Tutorial';
 import Game from './Game';
-import About from './About';
-import Button from './Button';
-import Footer from './Footer';
+import Navbar from './Navbar';
 
-import { useToggleHook } from './hooks/useToggleHook';
+const GameCanvas = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+`;
 
 export default function App() {
-  const ABOUT = 'ABOUT';
-  const TUTORIAL = 'TUTORIAL';
-
-  const { mode, toggleState } = useToggleHook(ABOUT, TUTORIAL);
-
   return (
     <div className="App">
-      <Game></Game>
-      <nav>
-        <Button onClick={toggleState} mode={mode} />
-      </nav>
-      {mode === TUTORIAL && <Tutorial />}
-      {mode === ABOUT && <About />}
-      <Footer />
+      <GameCanvas>
+        <Game />
+      </GameCanvas>
+      <Navbar />
     </div>
   );
 }

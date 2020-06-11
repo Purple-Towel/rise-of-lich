@@ -1,16 +1,7 @@
-.App {
-  text-align: center;
-}
+@import url('https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap');
 
 body {
+  margin-top: 0;
+  padding: 0;
   background: #e2c489 url('../assets/paperbg.png');
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

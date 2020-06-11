@@ -5,6 +5,7 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import ListItem, { ListItemProps } from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { AUTO } from 'phaser';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       width: '100%',
       maxWidth: 360,
+      margin: 'auto',
     },
   })
 );
@@ -26,24 +28,24 @@ export default function SimpleList() {
 
   return (
     <div className={classes.root}>
-      <List component="nav" aria-label="secondary mailbox folders">
+      <List component="nav" aria-label="Github links">
         <ListItemLink href="#simple-list">
           <ListItemIcon>
             <GitHubIcon />
           </ListItemIcon>
-          <ListItemText primary="Purple-Towel" />
+          <ListItemText primary="Angad Grewal" />
         </ListItemLink>
         <ListItemLink href="#simple-list">
           <ListItemIcon>
             <GitHubIcon />
           </ListItemIcon>
-          <ListItemText primary="DPintoLL" />
+          <ListItemText primary="Diogo Pinto" />
         </ListItemLink>
         <ListItemLink href="#simple-list">
           <ListItemIcon>
             <GitHubIcon />
           </ListItemIcon>
-          <ListItemText primary="rancewcampbell" />
+          <ListItemText primary="Rance Campbell" />
         </ListItemLink>
       </List>
     </div>

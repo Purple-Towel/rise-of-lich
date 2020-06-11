@@ -1,5 +1,0 @@
-.grid2x3 {
-    display: inline-grid;
-    grid-template-columns: repeat(3, [col-start] 1fr);
-    grid-gap: 0px;
-  }
