@@ -101,6 +101,21 @@ export default class Game extends Phaser.Scene {
     const justDown = Phaser.Input.Keyboard.JustDown(this.cursors.down!);
     const justUp = Phaser.Input.Keyboard.JustDown(this.cursors.up!);
 
+    this.input.keyboard.once(
+      'keydown-R',
+      () => {
+        this.add
+          .text(this.scale.width * 0.5, this.scale.height * 0.5, 'Restarting', {
+            fontSize: 16,
+            fontFamily: 'Metal Mania',
+            color: '#f00',
+          })
+          .setOrigin(0.5);
+        this.scene.start('game', { currentLevel: this.currentLevel, steps: 0 });
+      },
+      this
+    );
+
     if (justRight) {
       if (!this.player) return;
       if (this.facing === 'left') {
@@ -146,7 +161,7 @@ export default class Game extends Phaser.Scene {
     if (this.hasObstruction(x, y)) return undefined;
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && (this.moves >= 2) && !(this.isGameOver)) {
+    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
       const moves = this.levels[this.currentLevel - 1].moves;
       this.currentLevel++;
       setTimeout(() => {
