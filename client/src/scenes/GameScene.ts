@@ -95,6 +95,22 @@ export default class Game extends Phaser.Scene {
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
 
+    //-- Audio --
+    //! Declared a config object for tweaking. Most of these are defaults
+    const musicConfig = {
+      mute: false,
+      volume: 0.5,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: false,
+      delay: 0,
+    };
+    this.bgMusic = this.sound.add("bg_music", musicConfig);
+    this.bgMusic.play();
+    this.boxDragSound = this.sound.add("audio_box_drag", { volume: 0.4 });
+    this.wallBumpSound = this.sound.add("audio_wall_bump", { volume: 0.5 });
+
     this.input.keyboard.once(
       "keydown-R",
       () => {
