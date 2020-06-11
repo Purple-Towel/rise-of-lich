@@ -10,3 +10,25 @@ canvas {
   border: 8px inset gold;
   border-radius: 9px;
 }
+
+.center-div {
+  width: 115px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.center-div > button {
+  font-size: 28px;
+  font-family: 'Metal Mania', cursive;
+  background-color: transparent;
+  border: 8px inset gold;
+  border-radius: 9px;
+}
+
+.center-div > button:hover {
+  
+  background-color: rgb(224, 171, 24);
+
+}
