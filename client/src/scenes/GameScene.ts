@@ -89,27 +89,36 @@ export default class Game extends Phaser.Scene {
 
     this.add.image(16, 16, "hud-icon");
     this.movesText = this.add.text(8, 8, `${this.moves}`, {
-      fontSize: '14px',
-      fill: '#f00',
+      fontSize: "14px",
+      fill: "#f00",
     });
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
 
-    //-- Audio --
-    //! Declared a config object for tweaking. Most of these are defaults
-    const musicConfig = {
-      mute: false,
-      volume: 0.5,
-      rate: 1,
-      detune: 0,
-      seek: 0,
-      loop: false,
-      delay: 0,
-    };
-    this.bgMusic = this.sound.add("bg_music", musicConfig);
-    this.bgMusic.play();
-    this.boxDragSound = this.sound.add("audio_box_drag", { volume: 0.4 });
-    this.wallBumpSound = this.sound.add("audio_wall_bump", { volume: 0.5 });
+    this.input.keyboard.once(
+      "keydown-R",
+      () => {
+        this.add
+          .text(
+            this.scale.width * 0.5,
+            this.scale.height * 0.21,
+            "Restarting...",
+            {
+              fontSize: 16,
+              fontFamily: "Metal Mania",
+              color: "#f00",
+            }
+          )
+          .setOrigin(0.5);
+        setTimeout(() => {
+          this.scene.start("game", {
+            currentLevel: this.currentLevel,
+            steps: 0,
+          });
+        }, 1000);
+      },
+      this
+    );
   }
 
   update() {
@@ -175,14 +184,17 @@ export default class Game extends Phaser.Scene {
     }
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
-      const moves = this.levels[this.currentLevel - 1].moves;
+    if (this.getTileAt(x, y, 39) && !this.isGameOver) {
       this.currentLevel++;
       setTimeout(() => {
-        this.scene.start("transition", {
-          currentLevel: this.currentLevel,
-          stepsTaken: this.steps,
-        });
+        if (this.currentLevel > this.levels.length) {
+          this.scene.start("victory");
+        } else {
+          this.scene.start("transition", {
+            currentLevel: this.currentLevel,
+            stepsTaken: this.steps,
+          });
+        }
       }, 700);
     }
 
@@ -202,7 +214,7 @@ export default class Game extends Phaser.Scene {
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
-        if (this.moves <= 0) {
+        if (this.moves <= 0 && !this.getTileAt(x, y, 39)) {
           this.isGameOver = true;
           this.bgMusic.pause();
           //TODO: Add death sound and tint

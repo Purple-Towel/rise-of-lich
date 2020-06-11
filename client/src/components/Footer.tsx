@@ -18,13 +18,13 @@ const Link = styled.a`
 const Footer = () => {
   return (
     <GitHubList>
-      <Link href="https://github.com/Purple-Towel">
-        <GitHubIcon /> Angad Grewel
+      <Link href="https://github.com/Purple-Towel" target="_blank">
+        <GitHubIcon /> Angad Grewal
       </Link>
-      <Link href="https://github.com/DPintoLL">
+      <Link href="https://github.com/DPintoLL" target="_blank">
         <GitHubIcon /> Diogo Pinto
       </Link>
-      <Link href="https://github.com/rancewcampbell">
+      <Link href="https://github.com/rancewcampbell" target="_blank">
         <GitHubIcon /> Rance Campbell
       </Link>
     </GitHubList>
