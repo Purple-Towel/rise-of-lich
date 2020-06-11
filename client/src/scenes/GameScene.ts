@@ -171,7 +171,7 @@ export default class Game extends Phaser.Scene {
     if (this.hasObstruction(x, y)) return undefined;
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
+    if (this.getTileAt(x, y, 39) && !this.isGameOver) {
       const moves = this.levels[this.currentLevel - 1].moves;
       this.currentLevel++;
       setTimeout(() => {
@@ -198,7 +198,7 @@ export default class Game extends Phaser.Scene {
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
-        if (this.moves <= 0) {
+        if (this.moves <= 0 && !this.getTileAt(x, y, 39)) {
           this.isGameOver = true;
         }
       },
