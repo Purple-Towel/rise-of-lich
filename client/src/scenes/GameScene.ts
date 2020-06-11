@@ -235,6 +235,12 @@ export default class Game extends Phaser.Scene {
     const spike = this.getSpikeAt(x, y);
 
     if (spike) {
+      const flashColor = () => {
+        this.player?.isTinted
+          ? this.player?.clearTint
+          : this.player?.setTint(0xff0000);
+      };
+      const damageIndicator = setInterval(flashColor, 500);
       return (this.moves -= 1);
     }
 
