@@ -145,6 +145,7 @@ export default class Game extends Phaser.Scene {
     }
     if (this.isGameOver === true) {
       this.player?.setTint(0xff0000);
+      this.sound.add('game_over', { volume: 0.5 }).play();
       this.input.keyboard.enabled = false;
       this.isGameOver = false;
       setTimeout(() => {
@@ -242,7 +243,6 @@ export default class Game extends Phaser.Scene {
         this.stepsText?.setText(`Steps: ${this.steps}`);
         if (this.moves <= 0) {
           this.bgMusic.pause();
-          //TODO: Add death sound and tint
           this.isGameOver = true;
         }
       },
