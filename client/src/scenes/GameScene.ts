@@ -237,7 +237,7 @@ export default class Game extends Phaser.Scene {
       duration: 400,
       onStart: () => {
         this.player?.anims.play('move', true);
-        this.moves -= 1;
+        this.decrementMoves();
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
@@ -280,7 +280,7 @@ export default class Game extends Phaser.Scene {
       if (this.player) {
         damageIndicator(this.player, this.sound.add('damage'));
       }
-      return (this.moves -= 1);
+      return this.decrementMoves();
     }
 
     if (this.steps % 2 === 0) {
@@ -308,14 +308,14 @@ export default class Game extends Phaser.Scene {
       const canHurt1 = this.canSpikeAlternating1Hurt();
       if (canHurt1) {
         damageIndicator(this.player!, this.sound.add('damage'));
-        return (this.moves -= 1);
+        return this.decrementMoves();
       }
     }
     if (spikeAlternating2) {
       const canHurt2 = this.canSpikeAlternating2Hurt();
       if (canHurt2) {
         damageIndicator(this.player!, this.sound.add('damage'));
-        return (this.moves -= 1);
+        return this.decrementMoves();
       }
     }
   }
@@ -474,5 +474,12 @@ export default class Game extends Phaser.Scene {
       }),
       frameRate: 10,
     });
+  }
+
+  // decrement by 1 if no argument passed
+  private decrementMoves(n: number = 1) {
+    if (this.moves > 0) {
+      this.moves -= n;
+    }
   }
 }
