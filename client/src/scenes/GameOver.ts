@@ -7,8 +7,8 @@ export default class GameOver extends Phaser.Scene {
     super('gameOver');
   }
 
-  create(d: { currentLevel: number }) {
-    const { currentLevel } = d;
+  create(d: { currentLevel: number; muted: boolean }) {
+    const { currentLevel, muted } = d;
     this.currentLevel = currentLevel;
     const width = this.scale.width;
     const height = this.scale.height;
@@ -46,7 +46,11 @@ export default class GameOver extends Phaser.Scene {
     this.input.keyboard.once(
       'keydown-R',
       () => {
-        this.scene.start('game', { currentLevel: this.currentLevel, steps: 0 });
+        this.scene.start('game', {
+          currentLevel: this.currentLevel,
+          steps: 0,
+          muted: muted,
+        });
       },
       this
     );

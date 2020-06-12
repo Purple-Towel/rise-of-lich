@@ -7,6 +7,7 @@ export default class Preload extends Phaser.Scene {
   }
 
   preload() {
+    // load spritesheets
     this.load.spritesheet('ghost-idle', 'assets/ghost-idle.png', {
       frameWidth: 64,
       frameHeight: 64,
@@ -30,16 +31,21 @@ export default class Preload extends Phaser.Scene {
       frameWidth: 160,
       frameHeight: 140,
     });
-    const fonts = new WebFontLoader(this.load, ['Metal Mania']);
-    this.load.addFile(fonts);
 
     this.load.spritesheet('hud-icon', 'assets/hud-icon.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
 
+    const fonts = new WebFontLoader(this.load, ['Metal Mania']);
+    this.load.addFile(fonts);
+
+    // load sounds
     this.load.audio('game_over', 'assets/audio/game_over.ogg');
     this.load.audio('damage', 'assets/audio/damage.ogg');
+    this.load.audio('bg_music', 'assets/audio/eerie-music.ogg');
+    this.load.audio('audio_box_drag', 'assets/audio/drag-gravel.ogg');
+    this.load.audio('audio_wall_bump', 'assets/audio/wall_bump.ogg');
   }
 
   create() {
