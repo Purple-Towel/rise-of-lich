@@ -6,7 +6,7 @@ import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
 import damageIndicator from '../helpers/damageIndicator';
-import { Sleeping } from 'matter';
+
 //import ending from '../game_components/levels/ending';
 
 export default class Game extends Phaser.Scene {
