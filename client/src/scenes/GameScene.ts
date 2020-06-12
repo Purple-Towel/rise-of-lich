@@ -33,6 +33,8 @@ export default class Game extends Phaser.Scene {
   private bgMusic!: Phaser.Sound.BaseSound;
   private boxDragSound!: Phaser.Sound.BaseSound;
   private wallBumpSound!: Phaser.Sound.BaseSound;
+  private mute: boolean = false;
+  private muteMessage?: Phaser.GameObjects.Text;
 
   constructor() {
     super('game');
@@ -40,12 +42,9 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.load.audio('bg_music', 'assets/audio/eerie-music.ogg');
-    this.load.audio('audio_box_drag', 'assets/audio/drag-gravel.ogg');
-    this.load.audio('audio_wall_bump', 'assets/audio/wall_bump.ogg');
   }
 
-  create(d: { currentLevel: number; steps: number }) {
+  create(d: { currentLevel: number; steps: number; muted: boolean }) {
     const { currentLevel, steps } = d;
     this.currentLevel = currentLevel;
     this.steps = steps;
@@ -84,6 +83,21 @@ export default class Game extends Phaser.Scene {
     this.player = this.layer
       .createFromTiles(400, 11, { key: 'character', frame: 40 })
       .pop();
+
+    this.muteMessage = this.add
+      .text(11, 185, 'Mute', {
+        fontSize: 10,
+        fontFamily: 'Metal Mania',
+        color: '#f00',
+      })
+      .setOrigin(0.5);
+    // .setVisible(false);
+
+    if (this.mute) {
+      this.muteMessage.setVisible(true);
+    } else {
+      this.muteMessage.setVisible(false);
+    }
 
     this.player?.setOrigin(0);
     this.createPlayerAnimations();
@@ -132,17 +146,41 @@ export default class Game extends Phaser.Scene {
           this.scene.start('game', {
             currentLevel: this.currentLevel,
             steps: 0,
+            muted: this.mute,
           });
         }, 1000);
       },
       this
     );
+
+    this.input.keyboard.on(
+      'keydown-M',
+      () => {
+        if (!this.mute) {
+          this.sound.mute = true;
+          this.mute = true;
+          this.muteMessage?.setVisible(true);
+        } else {
+          this.sound.mute = false;
+          this.mute = false;
+          this.muteMessage?.setVisible(false);
+        }
+      },
+      this
+    );
+  }
+
+  private muteSounds() {
+    this.bgMusic.pause();
+    this.boxDragSound.pause();
+    this.wallBumpSound.pause();
   }
 
   update() {
     if (!this.cursors) {
       return;
     }
+
     if (this.isGameOver === true) {
       this.player?.setTint(0xff0000);
       this.sound.add('game_over').play();
@@ -153,6 +191,7 @@ export default class Game extends Phaser.Scene {
         this.scene.start('gameOver', {
           currentLevel: this.currentLevel,
           steps: 0,
+          muted: this.mute,
         });
       }, 1100);
     }
@@ -225,6 +264,7 @@ export default class Game extends Phaser.Scene {
           this.scene.start('transition', {
             currentLevel: this.currentLevel,
             stepsTaken: this.steps,
+            muted: this.mute,
           });
         }
       }, 700);

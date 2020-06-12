@@ -6,8 +6,8 @@ export default class Transition extends Phaser.Scene {
     super('transition');
   }
 
-  create(d: { currentLevel: number; stepsTaken: number }) {
-    const { currentLevel, stepsTaken } = d;
+  create(d: { currentLevel: number; stepsTaken: number; muted: boolean }) {
+    const { currentLevel, stepsTaken, muted } = d;
 
     const width = this.scale.width;
     const height = this.scale.height;
@@ -46,14 +46,22 @@ export default class Transition extends Phaser.Scene {
     this.input.keyboard.once(
       'keydown-R',
       () => {
-        this.scene.start('game', { currentLevel: currentLevel - 1, steps: 0 });
+        this.scene.start('game', {
+          currentLevel: currentLevel - 1,
+          steps: 0,
+          muted: muted,
+        });
       },
       this
     );
     this.input.keyboard.once(
       'keydown-ENTER',
       () => {
-        this.scene.start('game', { currentLevel: currentLevel, steps: 0 });
+        this.scene.start('game', {
+          currentLevel: currentLevel,
+          steps: 0,
+          muted: muted,
+        });
       },
       this
     );
