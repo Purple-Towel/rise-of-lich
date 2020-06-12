@@ -39,6 +39,7 @@ export default class Preload extends Phaser.Scene {
     });
 
     this.load.audio('game_over', 'assets/audio/game_over.ogg');
+    this.load.audio('damage', 'assets/audio/damage.ogg');
   }
 
   create() {

@@ -145,7 +145,7 @@ export default class Game extends Phaser.Scene {
     }
     if (this.isGameOver === true) {
       this.player?.setTint(0xff0000);
-      this.sound.add('game_over', { volume: 0.5 }).play();
+      this.sound.add('game_over').play();
       this.input.keyboard.enabled = false;
       this.isGameOver = false;
       setTimeout(() => {
@@ -278,7 +278,7 @@ export default class Game extends Phaser.Scene {
 
     if (spike) {
       if (this.player) {
-        damageIndicator(this.player);
+        damageIndicator(this.player, this.sound.add('damage'));
       }
       return (this.moves -= 1);
     }
@@ -307,12 +307,14 @@ export default class Game extends Phaser.Scene {
     if (spikeAlternating1) {
       const canHurt1 = this.canSpikeAlternating1Hurt();
       if (canHurt1) {
+        damageIndicator(this.player!, this.sound.add('damage'));
         return (this.moves -= 1);
       }
     }
     if (spikeAlternating2) {
       const canHurt2 = this.canSpikeAlternating2Hurt();
       if (canHurt2) {
+        damageIndicator(this.player!, this.sound.add('damage'));
         return (this.moves -= 1);
       }
     }
