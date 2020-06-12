@@ -211,7 +211,12 @@ export default class Game extends Phaser.Scene {
     }
 
     // if you reach the finishing tile, start the next scene
-    if (this.getTileAt(x, y, 39) && this.moves >= 2 && !this.isGameOver) {
+    if (
+      this.getTileAt(x, y, 39) &&
+      this.moves >= 2 &&
+      !this.isGameOver &&
+      !this.getBoxAt(x, y)
+    ) {
       this.currentLevel++;
       setTimeout(() => {
         if (this.currentLevel > this.levels.length) {
