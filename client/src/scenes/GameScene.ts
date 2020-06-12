@@ -6,6 +6,7 @@ import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
 import damageIndicator from '../helpers/damageIndicator';
+import { Sleeping } from 'matter';
 //import ending from '../game_components/levels/ending';
 
 export default class Game extends Phaser.Scene {
@@ -143,8 +144,17 @@ export default class Game extends Phaser.Scene {
       return;
     }
     if (this.isGameOver === true) {
-      this.scene.start('gameOver', { currentLevel: this.currentLevel });
+      this.player?.setTint(0xff0000);
+      this.sound.add('game_over', { volume: 0.5 }).play();
+      this.input.keyboard.enabled = false;
       this.isGameOver = false;
+      setTimeout(() => {
+        this.input.keyboard.enabled = true;
+        this.scene.start('gameOver', {
+          currentLevel: this.currentLevel,
+          steps: 0,
+        });
+      }, 1100);
     }
 
     const justLeft = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
@@ -232,10 +242,8 @@ export default class Game extends Phaser.Scene {
         this.movesText?.setText(`${this.moves}`);
         this.stepsText?.setText(`Steps: ${this.steps}`);
         if (this.moves <= 0) {
-          this.isGameOver = true;
           this.bgMusic.pause();
-          //TODO: Add death sound and tint
-          this.player!.setTint(0xff0000);
+          this.isGameOver = true;
         }
       },
       onComplete: () => {
