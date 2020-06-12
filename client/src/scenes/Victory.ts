@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import TextBlink from '../game_components/TextBlink';
 
 export default class Victory extends Phaser.Scene {
   constructor() {
