@@ -177,14 +177,20 @@ export default class Game extends Phaser.Scene {
       return;
     }
 
-    for (let skeleton of this.enemy_skeleton!) {
-      skeleton.anims.play("skeleton_idle", true);
+    if (this.enemy_skeleton) {
+      for (let skeleton of this.enemy_skeleton!) {
+        skeleton.anims.play("skeleton_idle", true);
+      }
     }
-    for (let ogre of this.enemy_ogre!) {
-      ogre.anims.play("ogre_idle", true);
+    if (this.enemy_ogre) {
+      for (let ogre of this.enemy_ogre!) {
+        ogre.anims.play("ogre_idle", true);
+      }
     }
-    for (let demon of this.enemy_demon!) {
-      demon.anims.play("demon_idle", true);
+    if (this.enemy_demon) {
+      for (let demon of this.enemy_demon!) {
+        demon.anims.play("demon_idle", true);
+      }
     }
 
     if (this.isGameOver === true) {
@@ -291,7 +297,6 @@ export default class Game extends Phaser.Scene {
     };
 
     if (box) {
-      console.log("box", box);
       // move box
       if (this.tweens.isTweening(box)) {
         return undefined;
@@ -305,12 +310,14 @@ export default class Game extends Phaser.Scene {
         targets: box,
       });
     } else if (enemy) {
-      console.log("enemy:", enemy);
       // move enemy
       if (this.tweens.isTweening(enemy)) {
         return undefined;
       }
+      // if player moves against blocked enemy, enemy gets killed
       if (!this.checkBoxMovement(enemy, axis, direction)) {
+        console.log("BLOCKED");
+        enemy.destroy();
         return undefined;
       }
       this.tweens.add({
