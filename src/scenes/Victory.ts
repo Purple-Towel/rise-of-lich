@@ -9,6 +9,8 @@ export default class Victory extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
+    localStorage.setItem('level', '1');
+
     this.add
       .text(width * 0.5, height * 0.25, 'You escaped the Lich King!', {
         fontSize: 24,
