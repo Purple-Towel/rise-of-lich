@@ -88,7 +88,7 @@ const Tutorial = () => {
       )}
       {selected === selections[1] && (
         <Paragraph>
-          Rora's Rune of Resetting works by returing you and all nearby objects
+          Rora's Rune of Resetting works by returning you and all nearby objects
           back to a moment in time determined arbitrarily. Simply touch the Rune
           indicated and you and everything else will return to a previous
           temporal state. (Yeah, this one is just a level reset button. Press
