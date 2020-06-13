@@ -257,6 +257,8 @@ export default class Game extends Phaser.Scene {
     };
 
     const box = this.getBoxAt(x, y);
+    const enemy = this.getBoxAt(x, y);
+    if (enemy) this.boxDragSound.play();
 
     const baseTween = {
       [axis]: directionXY[direction],
