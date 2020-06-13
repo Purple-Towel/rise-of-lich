@@ -14,6 +14,7 @@ export default class Game extends Phaser.Scene {
   private enemy_skeleton?: Phaser.GameObjects.Sprite[];
   private enemy_ogre?: Phaser.GameObjects.Sprite[];
   private enemy_demon?: Phaser.GameObjects.Sprite[];
+  private enemies?: Phaser.GameObjects.Sprite[];
   private boxes: Phaser.GameObjects.Sprite[] = [];
   private spikes: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
@@ -105,6 +106,14 @@ export default class Game extends Phaser.Scene {
         frame: 119,
       })
       .map((e) => e.setOrigin(0));
+
+    if (this.enemy_skeleton && this.enemy_ogre && this.enemy_demon) {
+      this.enemies = [
+        ...this.enemy_skeleton,
+        ...this.enemy_ogre,
+        ...this.enemy_demon,
+      ];
+    }
 
     this.player?.setOrigin(0);
     this.createPlayerAnimations();
@@ -257,8 +266,7 @@ export default class Game extends Phaser.Scene {
     };
 
     const box = this.getBoxAt(x, y);
-    const enemy = this.getBoxAt(x, y);
-    if (enemy) this.boxDragSound.play();
+    const enemy = this.getEnemyAt(x, y);
 
     const baseTween = {
       [axis]: directionXY[direction],
@@ -283,6 +291,7 @@ export default class Game extends Phaser.Scene {
     };
 
     if (box) {
+      console.log("box", box);
       // move box
       if (this.tweens.isTweening(box)) {
         return undefined;
@@ -294,6 +303,19 @@ export default class Game extends Phaser.Scene {
       this.tweens.add({
         ...baseTween,
         targets: box,
+      });
+    } else if (enemy) {
+      console.log("enemy:", enemy);
+      // move enemy
+      if (this.tweens.isTweening(enemy)) {
+        return undefined;
+      }
+      if (!this.checkBoxMovement(enemy, axis, direction)) {
+        return undefined;
+      }
+      this.tweens.add({
+        ...baseTween,
+        targets: enemy,
       });
     } else {
       // move player
@@ -402,7 +424,11 @@ export default class Game extends Phaser.Scene {
   // returns whether or not a moveable object has an obstruction based
   // on the x and y coords the sprite is pushing it
   private hasObjectObstruction(x: number, y: number) {
-    if (this.hasObstruction(x, y) || this.getBoxAt(x, y)) {
+    if (
+      this.hasObstruction(x, y) ||
+      this.getBoxAt(x, y) ||
+      this.getEnemyAt(x, y)
+    ) {
       return true;
     }
   }
@@ -411,6 +437,12 @@ export default class Game extends Phaser.Scene {
   private getBoxAt(x: number, y: number) {
     return this.boxes.find((box) => {
       const rect = box.getBounds();
+      return rect.contains(x, y);
+    });
+  }
+  private getEnemyAt(x: number, y: number) {
+    return this.enemies?.find((enemy) => {
+      const rect = enemy.getBounds();
       return rect.contains(x, y);
     });
   }
