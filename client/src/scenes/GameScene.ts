@@ -91,7 +91,6 @@ export default class Game extends Phaser.Scene {
         color: '#f00',
       })
       .setOrigin(0.5);
-    // .setVisible(false);
 
     if (this.mute) {
       this.muteMessage.setVisible(true);
@@ -103,11 +102,13 @@ export default class Game extends Phaser.Scene {
     this.createPlayerAnimations();
     this.createSpikeAnimations();
 
-    this.add.image(16, 16, 'hud-icon');
-    this.movesText = this.add.text(8, 8, `${this.moves}`, {
-      fontSize: '14px',
-      fill: '#f00',
-    });
+    this.add.image(this.scale.width * 0.05, 16, 'hud-icon');
+    this.movesText = this.add
+      .text(this.scale.width * 0.05, 16, `${this.moves}`, {
+        fontSize: '14px',
+        fill: '#f00',
+      })
+      .setOrigin(0.5);
     this.movesText.setShadow(1, 1);
     this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
 
@@ -168,12 +169,6 @@ export default class Game extends Phaser.Scene {
       },
       this
     );
-  }
-
-  private muteSounds() {
-    this.bgMusic.pause();
-    this.boxDragSound.pause();
-    this.wallBumpSound.pause();
   }
 
   update() {
