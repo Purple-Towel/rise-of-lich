@@ -128,47 +128,9 @@ export default class Game extends Phaser.Scene {
     this.boxDragSound = this.sound.add('audio_box_drag', { volume: 0.4 });
     this.wallBumpSound = this.sound.add('audio_wall_bump', { volume: 0.5 });
 
-    this.input.keyboard.once(
-      'keydown-R',
-      () => {
-        this.add
-          .text(
-            this.scale.width * 0.5,
-            this.scale.height * 0.21,
-            'Restarting...',
-            {
-              fontSize: 16,
-              fontFamily: 'Metal Mania',
-              color: '#f00',
-            }
-          )
-          .setOrigin(0.5);
-        setTimeout(() => {
-          this.scene.start('game', {
-            currentLevel: this.currentLevel,
-            steps: 0,
-            muted: this.mute,
-          });
-        }, 1000);
-      },
-      this
-    );
+    this.input.keyboard.once('keydown-R', this.resetLevel, this);
 
-    this.input.keyboard.on(
-      'keydown-M',
-      () => {
-        if (!this.mute) {
-          this.sound.mute = true;
-          this.mute = true;
-          this.muteMessage?.setVisible(true);
-        } else {
-          this.sound.mute = false;
-          this.mute = false;
-          this.muteMessage?.setVisible(false);
-        }
-      },
-      this
-    );
+    this.input.keyboard.on('keydown-M', this.toggleMute, this);
   }
 
   update() {
@@ -177,18 +139,7 @@ export default class Game extends Phaser.Scene {
     }
 
     if (this.isGameOver === true) {
-      this.player?.setTint(0xff0000);
-      this.sound.add('game_over').play();
-      this.input.keyboard.enabled = false;
-      this.isGameOver = false;
-      setTimeout(() => {
-        this.input.keyboard.enabled = true;
-        this.scene.start('gameOver', {
-          currentLevel: this.currentLevel,
-          steps: 0,
-          muted: this.mute,
-        });
-      }, 1100);
+      this.gameOver();
     }
 
     const justLeft = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
@@ -245,24 +196,14 @@ export default class Game extends Phaser.Scene {
     }
 
     // if you reach the finishing tile, start the next scene
-    if (
+    const levelFinished =
       this.getTileAt(x, y, 39) &&
       this.moves >= 2 &&
       !this.isGameOver &&
-      !this.getBoxAt(x, y)
-    ) {
-      this.currentLevel++;
-      setTimeout(() => {
-        if (this.currentLevel > this.levels.length) {
-          this.scene.start('victory');
-        } else {
-          this.scene.start('transition', {
-            currentLevel: this.currentLevel,
-            stepsTaken: this.steps,
-            muted: this.mute,
-          });
-        }
-      }, 700);
+      !this.getBoxAt(x, y);
+
+    if (levelFinished) {
+      this.transition();
     }
 
     const directionXY = {
@@ -521,5 +462,66 @@ export default class Game extends Phaser.Scene {
     if (this.moves > 0) {
       this.moves -= n;
     }
+  }
+
+  private resetLevel() {
+    this.add
+      .text(this.scale.width * 0.5, this.scale.height * 0.21, 'Restarting...', {
+        fontSize: 16,
+        fontFamily: 'Metal Mania',
+        color: '#f00',
+      })
+      .setOrigin(0.5);
+    this.input.keyboard.enabled = false;
+    setTimeout(() => {
+      this.input.keyboard.enabled = true;
+      this.scene.start('game', {
+        currentLevel: this.currentLevel,
+        steps: 0,
+        muted: this.mute,
+      });
+    }, 1000);
+  }
+
+  private toggleMute() {
+    if (!this.mute) {
+      this.sound.mute = true;
+      this.mute = true;
+      this.muteMessage?.setVisible(true);
+    } else {
+      this.sound.mute = false;
+      this.mute = false;
+      this.muteMessage?.setVisible(false);
+    }
+  }
+
+  private gameOver() {
+    this.player?.setTint(0xff0000);
+    this.sound.add('game_over').play();
+    this.input.keyboard.enabled = false;
+    this.isGameOver = false;
+    setTimeout(() => {
+      this.input.keyboard.enabled = true;
+      this.scene.start('gameOver', {
+        currentLevel: this.currentLevel,
+        steps: 0,
+        muted: this.mute,
+      });
+    }, 1100);
+  }
+
+  private transition() {
+    this.currentLevel++;
+    setTimeout(() => {
+      if (this.currentLevel > this.levels.length) {
+        this.scene.start('victory');
+      } else {
+        this.scene.start('transition', {
+          currentLevel: this.currentLevel,
+          stepsTaken: this.steps,
+          muted: this.mute,
+        });
+      }
+    }, 700);
   }
 }
