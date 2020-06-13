@@ -1,86 +1,68 @@
-## NOTE: This repo has not been updated in a while.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-You may find that the versions of React, Rails, and Ruby are _NOT_ the most current. Feel free to update this repo and make a PR with new versions. Also, please let me know if you run into any bugs.
+## Available Scripts
 
-# React + Rails No-Fluff Boilerplate
+In the project directory, you can run:
 
-A boilerplate project for anyone interested in making a project that uses React and Rails.
+### `npm start`
 
-Note! This boilerplate has _no fluff_! That means that there's nothing set up for you to do authentication stuff, there's no Redux stuff, and there's no React Router stuff.
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The main important bit is that the React project has `proxy` set to `localhost:3001` in the `package.json` file. Take a look!
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-## Hall of Fame
+### `npm test`
 
-Here are some projects that have been built using this boilerplate.
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-- [latercart](https://github.com/bonitac/latercart)
-- [Cards-Against-the-Internet](https://github.com/csx773/Cards-Against-the-Internet)
-- [Jetify](https://github.com/shadeying/Jetify)
-- [watchpoll](https://github.com/grey275/watchpoll)
-- [StartDuck](https://github.com/JerChuang/StartDuck)
-- [Change-App](https://github.com/ZHShang/Change-App)
+### `npm run build`
 
-## Using the boilerplate
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-First, fork this boilerplate so you get your own copy of it. Once you have done that, you can clone your new repo to your machine, and get started.
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
 
-You need **TWO** terminals for this.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-In one terminal, run `bundle` to install the dependencies. Run `bin/rake db:setup` to create the databases (called rails_project_development by default). Run `bin/rails s` to run the server.
+### `npm run eject`
 
-In the other terminal, `cd` into `client`. Run `npm install`. Rename the `.env.example` file to be called `.env`. Then run `npm start` and go to `localhost:3000` in your browser.
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-In the browser, you can click on the button and see the data get loaded.
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-If this doesn't work, please message me!
+Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-## Next steps
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-From here, you can start working on your project!
+## Learn More
 
-On the Rails side, you may make new `resources` routes in your `routes.rb` file, e.g. :
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-```rb
-namespace :api do
-  resources :dogs # to generate GET /api/dogs, POST /api/dogs, etc...
-end
-```
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-Then you can make your various controllers, models, migrations, etc. as you need! The one funky thing is that instead of rendering an HTML view you'll be rendering JSON. [You can return anything from a Rails controller as JSON like this.](https://guides.rubyonrails.org/v5.2/layouts_and_rendering.html#rendering-json) See the example in my "tests_controller".
+### Code Splitting
 
-On the React side, the important bit is that you make you make your AJAXy HTTP requests using something like `axios` or `superagent`. I've set this up to use `axios` already. Check the React code to see an example request being made on-click to the Rails server! You can make your HTTP requests to `/api/anything/you/want`, as long as the route exists on your Rails app.
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
-**NOTE:** I recommend that you namespace all your routes under `api` on the Rails side! Look at how I've done that in the `routes.rb` file, and also how the `tests_controller` is written as:
+### Analyzing the Bundle Size
 
-```rb
-class Api::TestsController < ApplicationController
-```
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
 
-and it lives in the `api` folder! Put all your controllers in there!
+### Making a Progressive Web App
 
-## Deployment to Heroku
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
 
-This boilerplate is _almost_ all set up to deal with deploying to Heroku. If you have the Heroku CLI tools installed you can run `heroku create` to create the Heroku project.
+### Advanced Configuration
 
-Then we must run two commands to tell Heroku to first build our React app, and _then_ build the Rails app.
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
 
-1. `heroku buildpacks:add heroku/nodejs --index 1`
-2. `heroku buildpacks:add heroku/ruby --index 2`
+### Deployment
 
-Once you've done that, you can run `git push heroku master` to deploy your project any time you want! Note, however, that deploying to Heroku can be a _little_ slow since Heroku needs to build your React app. Just give it some time.
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
 
-Once it's deployed, you can run the following commands to manage your app:
+### `npm run build` fails to minify
 
-- `heroku run rake db:schema:load` to set up your database the first time
-- `heroku run rake db:migrate` for any additional migrations
-- `heroku run rake db:seed` for seeds
-- `heroku run rake db:rollback` to rollback a migration
-
-There are other commands, but these are good to get you started!
-
-To make your app work properly with React Router (if you end up using it) on Heroku, I've added a special route to the `routes.rb` file (`get '*path' ... `).
-
-## Contact
-
-Please contact me at `nima@lighthouselabs.com` if you have any questions or requests, or post an issue to this repo.
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
