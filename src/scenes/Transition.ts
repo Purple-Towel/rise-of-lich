@@ -12,6 +12,8 @@ export default class Transition extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
+    localStorage.setItem('level', currentLevel.toString());
+
     this.add
       .text(width * 0.5, height * 0.25, 'Level Completed', {
         fontSize: 24,
