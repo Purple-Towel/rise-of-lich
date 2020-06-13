@@ -27,13 +27,13 @@ export default class Game extends Phaser.Scene {
   // private canvas?: Phaser.s
   // private movesLeft?: movesLeft;
   private levels = [level1, level2, level3, level4, level5];
-  currentLevel: number = 1;
+  private currentLevel: number = 1;
 
   //Todo: Refactor into an object with each sound as keys
   private bgMusic!: Phaser.Sound.BaseSound;
   private boxDragSound!: Phaser.Sound.BaseSound;
   private wallBumpSound!: Phaser.Sound.BaseSound;
-  mute: boolean = false;
+  private mute: boolean = false;
   private muteMessage?: Phaser.GameObjects.Text;
 
   constructor() {
