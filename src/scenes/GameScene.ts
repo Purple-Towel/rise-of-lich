@@ -514,8 +514,20 @@ export default class Game extends Phaser.Scene {
     this.currentLevel++;
     setTimeout(() => {
       if (this.currentLevel > this.levels.length) {
+        this.sound
+          .add('victory', {
+            mute: false,
+            volume: 1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0,
+          })
+          .play();
         this.scene.start('victory');
       } else {
+        this.sound.add('win').play();
         this.scene.start('transition', {
           currentLevel: this.currentLevel,
           stepsTaken: this.steps,

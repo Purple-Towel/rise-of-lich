@@ -46,6 +46,8 @@ export default class Preload extends Phaser.Scene {
     this.load.audio('bg_music', 'assets/audio/eerie-music.ogg');
     this.load.audio('audio_box_drag', 'assets/audio/drag-gravel.ogg');
     this.load.audio('audio_wall_bump', 'assets/audio/wall_bump.ogg');
+    this.load.audio('win', 'assets/audio/win.ogg');
+    this.load.audio('victory', 'assets/audio/victory.ogg');
   }
 
   create() {
