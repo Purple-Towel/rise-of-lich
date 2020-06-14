@@ -34,8 +34,6 @@ export default class Game extends Phaser.Scene {
 
   //Todo: Refactor into an object with each sound as keys
   private bgMusic!: Phaser.Sound.BaseSound;
-  private boxDragSound!: Phaser.Sound.BaseSound;
-  private wallBumpSound!: Phaser.Sound.BaseSound;
 
   constructor() {
     super("game");
@@ -46,6 +44,10 @@ export default class Game extends Phaser.Scene {
     this.load.audio("bg_music", "assets/audio/eerie-music.ogg");
     this.load.audio("audio_box_drag", "assets/audio/drag-gravel.ogg");
     this.load.audio("audio_wall_bump", "assets/audio/wall_bump.ogg");
+    this.load.audio("audio_monster_death_1", "assets/audio/monster_death.ogg");
+    this.load.audio("audio_monster_death_2", "assets/audio/drag-gravel.ogg");
+    this.load.audio("punch", "assets/audio/punch.ogg");
+    this.load.audio("kick", "assets/audio/kick.ogg");
   }
 
   create(d: { currentLevel: number; steps: number }) {
@@ -144,8 +146,12 @@ export default class Game extends Phaser.Scene {
     };
     this.bgMusic = this.sound.add("bg_music", musicConfig);
     this.bgMusic.play();
-    this.boxDragSound = this.sound.add("audio_box_drag", { volume: 0.4 });
-    this.wallBumpSound = this.sound.add("audio_wall_bump", { volume: 0.5 });
+    this.sound.add("audio_box_drag", { volume: 0.4 });
+    this.sound.add("audio_wall_bump", { volume: 0.5 });
+    this.sound.add("audio_monster_death_1");
+    this.sound.add("audio_monster_death_2");
+    this.sound.add("punch");
+    this.sound.add("kick");
 
     this.input.keyboard.once(
       "keydown-R",
@@ -251,7 +257,7 @@ export default class Game extends Phaser.Scene {
     // if next move has wall escape early
     if (this.hasObstruction(x, y)) {
       //TODO: Add little shake when player bumps walls
-      this.wallBumpSound.play();
+      this.sound.play("audio_wall_bump");
       return undefined;
     }
 
@@ -308,7 +314,8 @@ export default class Game extends Phaser.Scene {
       if (!this.checkBoxMovement(box, axis, direction)) {
         return undefined;
       }
-      this.boxDragSound.play();
+      this.sound.play("audio_box_drag");
+
       this.tweens.add({
         ...baseTween,
         targets: box,
@@ -322,7 +329,15 @@ export default class Game extends Phaser.Scene {
       if (!this.checkBoxMovement(enemy, axis, direction)) {
         enemy.anims.pause();
         enemy.setTint(0xff0000);
-        // enemy.setOrigin(0.5, 0.5);
+        if (Math.floor(Math.random() * 10 + 1) % 2) {
+          this.sound.play("punch");
+          this.sound.play("audio_monster_death_1");
+        } else {
+          this.sound.play("kick");
+          this.sound.play("audio_monster_death_2");
+        }
+
+        // nX and nY were necessary to center animation on tile
         let nX = x + 4;
         let nY = y + 4;
         this.tweens.add({
