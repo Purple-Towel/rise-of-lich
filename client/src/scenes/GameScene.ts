@@ -322,10 +322,14 @@ export default class Game extends Phaser.Scene {
       if (!this.checkBoxMovement(enemy, axis, direction)) {
         enemy.anims.pause();
         enemy.setTint(0xff0000);
-        enemy.setOrigin(0);
+        // enemy.setOrigin(0.5, 0.5);
+        let nX = x + 4;
+        let nY = y + 4;
         this.tweens.add({
           targets: enemy,
-          duration: 3000,
+          duration: 1000,
+          x: nX,
+          y: nY,
           scale: 0,
           rotation: 90,
         });
