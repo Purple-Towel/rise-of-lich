@@ -320,33 +320,17 @@ export default class Game extends Phaser.Scene {
       }
       // if player moves against blocked enemy, enemy gets killed
       if (!this.checkBoxMovement(enemy, axis, direction)) {
-        console.log("BLOCKED");
-        console.log("ENEMY: ", enemy);
-        console.log("ENEMies: ", this.enemies);
-        //! Instead of enemy.destroy(); let's try to tween the scaleXY to 0
-        enemy.scale = 0;
-
-        // remove enemy from enemies array filtering by XY coords
-        const enemyIndex = this.enemies?.findIndex(
-          (enemy) => enemy.x === this.player?.x && enemy.y === this.player?.y
-        ); //x80 y128
-        console.log("Move X:", x, "Move Y:", y);
-        console.log("Player X:", this.player?.x, "Player Y:", this.player?.y);
-        for (let enemy of this.enemies!) {
-          console.log("enemy.X", enemy.x, "enemy.Y", enemy.y);
-        }
-
-        console.log("enemyIndex", enemyIndex);
-        if (enemyIndex! > -1) {
-          this.enemies?.splice(enemyIndex!, 1);
-          // enemy.destroy();
-          // enemy.scale = 0;
-
-          console.log("ENEMies after removal: ", this.enemies);
-        }
+        enemy.anims.pause();
+        enemy.setTint(0xff0000);
+        enemy.setOrigin(0);
+        this.tweens.add({
+          targets: enemy,
+          duration: 3000,
+          scale: 0,
+          rotation: 90,
+        });
         return undefined;
       }
-
       this.tweens.add({
         ...baseTween,
         targets: enemy,
