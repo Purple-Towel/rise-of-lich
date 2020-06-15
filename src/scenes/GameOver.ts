@@ -1,3 +1,5 @@
+// Gameover scene played when sprite loses all stamina
+
 import Phaser from 'phaser';
 import TextBlink from '../game_components/TextBlink';
 
@@ -43,6 +45,7 @@ export default class GameOver extends Phaser.Scene {
 
     TextBlink.flashElement(this, enter);
 
+    // replay current level when R is pressed
     this.input.keyboard.once(
       'keydown-R',
       () => {

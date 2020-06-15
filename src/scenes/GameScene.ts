@@ -1,3 +1,5 @@
+// Main Game scene where player interacts with sprite
+
 import Phaser from 'phaser';
 import level1 from '../game_components/levels/level1';
 import level2 from '../game_components/levels/level2';
@@ -52,9 +54,11 @@ export default class Game extends Phaser.Scene {
 
     this.moves = this.levels[this.currentLevel - 1].moves;
 
+    // construct the map from the tileset
     const tiles = map.addTilesetImage('tiles');
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
+    // construct barriers to movement from tiles
     this.barriers = this.layer
       .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
       .map(barrier => barrier.setOrigin(0));
@@ -106,6 +110,7 @@ export default class Game extends Phaser.Scene {
       ];
     }
 
+    // create mute text if state is muted
     this.muteMessage = this.add
       .text(11, 185, 'Mute', {
         fontSize: 10,
@@ -114,12 +119,14 @@ export default class Game extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    // show mute text based on previous state
     if (this.mute) {
       this.muteMessage.setVisible(true);
     } else {
       this.muteMessage.setVisible(false);
     }
 
+    // insert player and create necessary animations
     this.player?.setOrigin(0);
     this.createPlayerAnimations();
     this.createSpikeAnimations();
@@ -127,6 +134,7 @@ export default class Game extends Phaser.Scene {
     this.createEnemyAnimations('ogre');
     this.createEnemyAnimations('demon');
 
+    // create stamina counter
     this.add.image(this.scale.width * 0.05, 16, 'hud-icon');
     this.movesText = this.add
       .text(this.scale.width * 0.05, 16, `${this.moves}`, {
@@ -135,11 +143,11 @@ export default class Game extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.movesText.setShadow(1, 1);
-    this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
+    // this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
 
     //-- Audio --
     //! Declared a config object for tweaking. Most of these are defaults
-    const musicConfig = {
+    this.bgMusic = this.sound.add('bg_music', {
       mute: false,
       volume: 0.5,
       rate: 1,
@@ -147,8 +155,7 @@ export default class Game extends Phaser.Scene {
       seek: 0,
       loop: false,
       delay: 0,
-    };
-    this.bgMusic = this.sound.add('bg_music', musicConfig);
+    });
     this.bgMusic.play();
     this.sound.add('audio_box_drag', { volume: 0.4 });
     this.sound.add('audio_wall_bump', { volume: 0.5 });
@@ -157,8 +164,8 @@ export default class Game extends Phaser.Scene {
     this.sound.add('punch');
     this.sound.add('kick');
 
+    // bind keys to special functions
     this.input.keyboard.once('keydown-R', this.resetLevel, this);
-
     this.input.keyboard.on('keydown-M', this.toggleMute, this);
   }
 
@@ -190,6 +197,7 @@ export default class Game extends Phaser.Scene {
       this.gameOver();
     }
 
+    // game accepts one keypress only. Cannot spam movements with multiple presses.
     const justLeft = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
     const justRight = Phaser.Input.Keyboard.JustDown(this.cursors.right!);
     const justDown = Phaser.Input.Keyboard.JustDown(this.cursors.down!);
@@ -454,6 +462,7 @@ export default class Game extends Phaser.Scene {
       return rect.contains(x, y);
     });
   }
+
   private getEnemyAt(x: number, y: number) {
     return this.enemies?.find(enemy => {
       const rect = enemy.getBounds();
@@ -480,6 +489,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  // create animations for player sprite
   private createPlayerAnimations() {
     this.anims.create({
       key: 'move',
@@ -593,6 +603,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  // resets level to original configuration
   private resetLevel() {
     this.add
       .text(this.scale.width * 0.5, this.scale.height * 0.21, 'Restarting...', {
@@ -612,6 +623,7 @@ export default class Game extends Phaser.Scene {
     }, 1000);
   }
 
+  // turn mute on and off
   private toggleMute() {
     if (!this.mute) {
       this.sound.mute = true;
@@ -624,6 +636,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  // transisition to gameover scene
   private gameOver() {
     this.player?.setTint(0xff0000);
     this.sound.add('game_over').play();
@@ -639,6 +652,7 @@ export default class Game extends Phaser.Scene {
     }, 1100);
   }
 
+  // transition to level complete or game complete
   private transition() {
     this.currentLevel++;
     setTimeout(() => {

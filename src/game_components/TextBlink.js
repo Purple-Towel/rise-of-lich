@@ -1,3 +1,5 @@
+// helper to implement blinking text in the Phaser game
+
 export default class TextBlink {
   static flashElement(
     scene,

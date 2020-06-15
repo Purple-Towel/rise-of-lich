@@ -1,3 +1,5 @@
+// Introduction scene
+
 import Phaser from 'phaser';
 import TextBlink from '../game_components/TextBlink';
 
@@ -14,12 +16,14 @@ export default class Intro extends Phaser.Scene {
     const height = this.scale.height;
     const title = 'Rise of Lich: Revengeance';
     const currentLevel = parseInt(localStorage.getItem('level') as string) || 1;
+
     let message: string;
     if (localStorage.getItem('level')) {
       message = 'Press ENTER to start or R to resume';
     } else {
       message = 'Press Enter to start';
     }
+
     this.anims.create({
       key: 'lich-idle',
       frames: this.anims.generateFrameNumbers('lich', { start: 0, end: 5 }),
@@ -47,6 +51,7 @@ export default class Intro extends Phaser.Scene {
 
     TextBlink.flashElement(this, enter);
 
+    // Restart level when R is pressed
     this.input.keyboard.once(
       'keydown-R',
       () => {
@@ -55,6 +60,8 @@ export default class Intro extends Phaser.Scene {
       },
       this
     );
+
+    // Play next level when ENTER is pressed
     this.input.keyboard.once(
       'keydown-ENTER',
       () => {
