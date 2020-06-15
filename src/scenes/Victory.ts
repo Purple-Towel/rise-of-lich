@@ -1,3 +1,5 @@
+// Victory scene when game beaten
+
 import Phaser from 'phaser';
 import TextBlink from '../game_components/TextBlink';
 
@@ -12,6 +14,7 @@ export default class Victory extends Phaser.Scene {
 
     const message = 'Press Enter to play again';
 
+    // clear local storage for next session to start from beginning
     localStorage.clear();
 
     const music = this.sound.add('victory', {
@@ -44,6 +47,7 @@ export default class Victory extends Phaser.Scene {
 
     TextBlink.flashElement(this, enter);
 
+    // restart the game
     this.input.keyboard.once(
       'keydown-ENTER',
       () => {
