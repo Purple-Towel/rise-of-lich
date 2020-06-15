@@ -48,8 +48,9 @@ const Tutorial = () => {
   const CRATES = 'Crates';
   const LADDERS = 'Ladders';
   const SPIKES = 'Spikes';
+  const ENEMIES = 'Enemies';
 
-  const selections = [MOVE, RESET, MUTE, CRATES, LADDERS, STAMINA, SPIKES];
+  const selections = [MOVE, RESET, MUTE, CRATES, LADDERS, STAMINA, SPIKES, ENEMIES];
 
   const Buttons = selections.map((selection, index) => {
     return (
@@ -142,6 +143,19 @@ const Tutorial = () => {
           These spike traps are somewhat common through the Lich's dungeon.
           Stepping on them takes twice as much Stamina as usual, so try not to
           dance on them, as fun as it may seem.
+        </Paragraph>
+      )}
+      {selected === selections[7] && (
+        <ImageContainer>
+          <Image src="assets/enemy1.png" alt="enemy1" />
+          <Image src="assets/enemy2.png" alt="enemy2" />
+          <Image src="assets/enemy3.png" alt="enemy3" />
+        </ImageContainer>
+      )}
+      {selected === selections[7] && (
+        <Paragraph>
+          Despite their fearsome appearances, these creatures don't exactly do anything other than stand there, menacingly.
+          In actuality they are illusions, created by the evil lich. Feel free to push them around and into things to 'kill' them.
         </Paragraph>
       )}
     </Container>
