@@ -44,13 +44,6 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.load.audio("bg_music", "assets/audio/eerie-music.ogg");
-    this.load.audio("audio_box_drag", "assets/audio/drag-gravel.ogg");
-    this.load.audio("audio_wall_bump", "assets/audio/wall_bump.ogg");
-    this.load.audio("audio_monster_death_1", "assets/audio/monster_death.ogg");
-    this.load.audio("audio_monster_death_2", "assets/audio/drag-gravel.ogg");
-    this.load.audio("punch", "assets/audio/punch.ogg");
-    this.load.audio("kick", "assets/audio/kick.ogg");
   }
 
   create(d: { currentLevel: number; steps: number; muted: boolean }) {
