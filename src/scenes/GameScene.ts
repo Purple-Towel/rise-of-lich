@@ -454,7 +454,11 @@ export default class Game extends Phaser.Scene {
   // returns whether or not a moveable object has an obstruction based
   // on the x and y coords the sprite is pushing it
   private hasObjectObstruction(x: number, y: number) {
-    if (this.hasObstruction(x, y) || this.getBoxAt(x, y)) {
+    if (
+      this.hasObstruction(x, y) ||
+      this.getBoxAt(x, y) ||
+      this.getEnemyAt(x, y)
+    ) {
       return true;
     }
   }
