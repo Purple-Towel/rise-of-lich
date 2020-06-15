@@ -325,8 +325,8 @@ export default class Game extends Phaser.Scene {
         let nX = x + 4;
         let nY = y + 4;
         this.tweens.add({
+          ...baseTween,
           targets: enemy,
-          duration: 1000,
           x: nX,
           y: nY,
           scale: 0,
