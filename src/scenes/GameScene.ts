@@ -128,11 +128,12 @@ export default class Game extends Phaser.Scene {
 
     // insert player and create necessary animations
     this.player?.setOrigin(0);
-    this.createPlayerAnimations();
-    this.createSpikeAnimations();
-    this.createEnemyAnimations('skeleton');
-    this.createEnemyAnimations('ogre');
-    this.createEnemyAnimations('demon');
+    // this.createPlayerAnimations();
+    // this.createSpikeAnimations();
+    // this.createEnemyAnimations('skeleton');
+    // this.createEnemyAnimations('ogre');
+    // this.createEnemyAnimations('demon');
+    this.createAnimations();
 
     // create stamina counter
     this.add.image(this.scale.width * 0.05, 16, 'hud-icon');
@@ -489,25 +490,6 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  // create animations for player sprite
-  private createPlayerAnimations() {
-    this.anims.create({
-      key: 'move',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 45,
-        end: 46,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'idle',
-      frames: [{ key: 'character', frame: 40 }],
-      frameRate: 20,
-    });
-  }
-
   private getSpikeAt(x: number, y: number) {
     return this.spikes.find(spikes => {
       const rect = spikes.getBounds();
@@ -539,61 +521,6 @@ export default class Game extends Phaser.Scene {
     if (this.steps % 2 === 1) {
       return true;
     } else return false;
-  }
-
-  private createSpikeAnimations() {
-    this.anims.create({
-      key: 'extend',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 353,
-        end: 356,
-      }),
-      frameRate: 10,
-    });
-    this.anims.create({
-      key: 'retract',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 356,
-        end: 353,
-      }),
-      frameRate: 10,
-    });
-  }
-
-  private createEnemyAnimations(enemyType: string) {
-    if (enemyType === 'skeleton') {
-      this.anims.create({
-        key: 'skeleton_idle',
-        frames: this.anims.generateFrameNumbers('character', {
-          start: 183,
-          end: 190,
-        }),
-        frameRate: 5,
-        repeat: -1,
-      });
-    }
-    if (enemyType === 'ogre') {
-      this.anims.create({
-        key: 'ogre_idle',
-        frames: this.anims.generateFrameNumbers('character', {
-          start: 375,
-          end: 382,
-        }),
-        frameRate: 5,
-        repeat: -1,
-      });
-    }
-    if (enemyType === 'demon') {
-      this.anims.create({
-        key: 'demon_idle',
-        frames: this.anims.generateFrameNumbers('character', {
-          start: 119,
-          end: 126,
-        }),
-        frameRate: 5,
-        repeat: -1,
-      });
-    }
   }
 
   // decrement by 1 if no argument passed
@@ -667,5 +594,145 @@ export default class Game extends Phaser.Scene {
         });
       }
     }, 700);
+  }
+
+  // create animations for player sprite
+  // private createPlayerAnimations() {
+  //   this.anims.create({
+  //     key: 'move',
+  //     frames: this.anims.generateFrameNumbers('character', {
+  //       start: 45,
+  //       end: 46,
+  //     }),
+  //     frameRate: 10,
+  //     repeat: -1,
+  //   });
+
+  //   this.anims.create({
+  //     key: 'idle',
+  //     frames: [{ key: 'character', frame: 40 }],
+  //     frameRate: 20,
+  //   });
+  // }
+
+  // private createSpikeAnimations() {
+  //   this.anims.create({
+  //     key: 'extend',
+  //     frames: this.anims.generateFrameNumbers('character', {
+  //       start: 353,
+  //       end: 356,
+  //     }),
+  //     frameRate: 10,
+  //   });
+  //   this.anims.create({
+  //     key: 'retract',
+  //     frames: this.anims.generateFrameNumbers('character', {
+  //       start: 356,
+  //       end: 353,
+  //     }),
+  //     frameRate: 10,
+  //   });
+  // }
+
+  // private createEnemyAnimations(enemyType: string) {
+  //   if (enemyType === 'skeleton') {
+  //     this.anims.create({
+  //       key: 'skeleton_idle',
+  //       frames: this.anims.generateFrameNumbers('character', {
+  //         start: 183,
+  //         end: 190,
+  //       }),
+  //       frameRate: 5,
+  //       repeat: -1,
+  //     });
+  //   }
+  //   if (enemyType === 'ogre') {
+  //     this.anims.create({
+  //       key: 'ogre_idle',
+  //       frames: this.anims.generateFrameNumbers('character', {
+  //         start: 375,
+  //         end: 382,
+  //       }),
+  //       frameRate: 5,
+  //       repeat: -1,
+  //     });
+  //   }
+  //   if (enemyType === 'demon') {
+  //     this.anims.create({
+  //       key: 'demon_idle',
+  //       frames: this.anims.generateFrameNumbers('character', {
+  //         start: 119,
+  //         end: 126,
+  //       }),
+  //       frameRate: 5,
+  //       repeat: -1,
+  //     });
+  //   }
+  // }
+
+  private createAnimations() {
+    this.anims.create({
+      key: 'move',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 45,
+        end: 46,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'idle',
+      frames: [{ key: 'character', frame: 40 }],
+      frameRate: 20,
+    });
+
+    this.anims.create({
+      key: 'extend',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 353,
+        end: 356,
+      }),
+      frameRate: 10,
+    });
+
+    this.anims.create({
+      key: 'retract',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 356,
+        end: 353,
+      }),
+      frameRate: 10,
+    });
+
+    this.anims.create({
+      key: 'skeleton_idle',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 183,
+        end: 190,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'ogre_idle',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 375,
+        end: 382,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'demon_idle',
+      frames: this.anims.generateFrameNumbers('character', {
+        start: 119,
+        end: 126,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
   }
 }
