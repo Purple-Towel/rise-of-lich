@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
-// import playGame from './phaser/scene';
 import Phaser from 'phaser';
 import Game from './scenes/GameScene';
 import Preload from './scenes/Preload';
