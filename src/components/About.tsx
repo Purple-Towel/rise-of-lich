@@ -14,6 +14,14 @@ const Subtitle = styled.h1`
   text-align: center;
 `;
 
+const Link = styled.a`
+  color: #000;
+
+  &:hover {
+    color: #f00;
+  }
+`;
+
 const About = () => {
   const paragraph = `
   Welcome to Rise of Lich: Revengeance! We are Angad, Diogo, and Rance and we built this
@@ -24,7 +32,15 @@ const About = () => {
   return (
     <Container>
       <Subtitle>About</Subtitle>
-      <p>{paragraph}</p>
+      <p>
+        {paragraph} Check out the source code{' '}
+        <Link
+          href="https://github.com/Purple-Towel/rise-of-lich"
+          target="_blank"
+        >
+          HERE.
+        </Link>
+      </p>
       <Footer />
     </Container>
   );
