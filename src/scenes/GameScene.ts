@@ -8,6 +8,8 @@ import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
 import Level from '../interfaces/Level';
 import damageIndicator from '../helpers/damageIndicator';
+import createAnimations from '../helpers/animations';
+import Box from '../game_components/Box';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -16,7 +18,8 @@ export default class Game extends Phaser.Scene {
   private enemy_ogre?: Phaser.GameObjects.Sprite[];
   private enemy_demon?: Phaser.GameObjects.Sprite[];
   private enemies?: Phaser.GameObjects.Sprite[];
-  private boxes: Phaser.GameObjects.Sprite[] = [];
+  // private boxes: Phaser.GameObjects.Sprite[] = [];
+  box?: Box;
   private spikes: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
@@ -76,9 +79,11 @@ export default class Game extends Phaser.Scene {
       .createFromTiles(779, 11, { key: 'character', frame: 356 })
       .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
 
-    this.boxes = this.layer
-      .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
-      .map(box => box.setOrigin(0));
+    // this.boxes = this.layer
+    //   .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
+    //   .map(box => box.setOrigin(0));
+
+    this.box = new Box(this.layer);
 
     this.player = this.layer
       .createFromTiles(400, 11, { key: 'character', frame: 40 })
@@ -129,7 +134,9 @@ export default class Game extends Phaser.Scene {
 
     // insert player and create necessary animations
     this.player?.setOrigin(0);
-    this.createAnimations();
+    // this.createAnimations();
+
+    createAnimations(this);
 
     // create stamina counter
     this.add.image(this.scale.width * 0.05, 16, 'hud-icon');
@@ -252,7 +259,7 @@ export default class Game extends Phaser.Scene {
       this.getTileAt(x, y, 39) &&
       this.moves >= 2 &&
       !this.isGameOver &&
-      !this.getBoxAt(x, y);
+      !this.box?.getBoxAt(x, y);
 
     if (levelFinished) {
       this.transition();
@@ -263,7 +270,7 @@ export default class Game extends Phaser.Scene {
       negative: '-=16',
     };
 
-    const box = this.getBoxAt(x, y);
+    const box = this.box?.getBoxAt(x, y);
     const enemy = this.getEnemyAt(x, y);
 
     const baseTween = {
@@ -445,19 +452,11 @@ export default class Game extends Phaser.Scene {
   private hasObjectObstruction(x: number, y: number) {
     if (
       this.hasObstruction(x, y) ||
-      this.getBoxAt(x, y) ||
+      this.box?.getBoxAt(x, y) ||
       this.getEnemyAt(x, y)
     ) {
       return true;
     }
-  }
-
-  // returns moveable box based on x & y coords
-  private getBoxAt(x: number, y: number) {
-    return this.boxes.find(box => {
-      const rect = box.getBounds();
-      return rect.contains(x, y);
-    });
   }
 
   private getEnemyAt(x: number, y: number) {
@@ -590,71 +589,5 @@ export default class Game extends Phaser.Scene {
         });
       }
     }, 700);
-  }
-
-  private createAnimations() {
-    this.anims.create({
-      key: 'move',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 45,
-        end: 46,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'idle',
-      frames: [{ key: 'character', frame: 40 }],
-      frameRate: 20,
-    });
-
-    this.anims.create({
-      key: 'extend',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 353,
-        end: 356,
-      }),
-      frameRate: 10,
-    });
-
-    this.anims.create({
-      key: 'retract',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 356,
-        end: 353,
-      }),
-      frameRate: 10,
-    });
-
-    this.anims.create({
-      key: 'skeleton_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 183,
-        end: 190,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'ogre_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 375,
-        end: 382,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'demon_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 119,
-        end: 126,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
   }
 }
