@@ -6,6 +6,7 @@ import level2 from '../game_components/levels/level2';
 import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
+import Level from '../interfaces/Level';
 import damageIndicator from '../helpers/damageIndicator';
 
 export default class Game extends Phaser.Scene {
@@ -27,7 +28,7 @@ export default class Game extends Phaser.Scene {
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
   private stepsText?: Phaser.GameObjects.Text;
-  private levels = [level1, level2, level3, level4, level5];
+  private levels: Level[] = [level1, level2, level3, level4, level5];
   private currentLevel: number = 1;
   private bgMusic!: Phaser.Sound.BaseSound;
   private mute: boolean = false;
@@ -128,11 +129,6 @@ export default class Game extends Phaser.Scene {
 
     // insert player and create necessary animations
     this.player?.setOrigin(0);
-    // this.createPlayerAnimations();
-    // this.createSpikeAnimations();
-    // this.createEnemyAnimations('skeleton');
-    // this.createEnemyAnimations('ogre');
-    // this.createEnemyAnimations('demon');
     this.createAnimations();
 
     // create stamina counter
@@ -595,80 +591,6 @@ export default class Game extends Phaser.Scene {
       }
     }, 700);
   }
-
-  // create animations for player sprite
-  // private createPlayerAnimations() {
-  //   this.anims.create({
-  //     key: 'move',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 45,
-  //       end: 46,
-  //     }),
-  //     frameRate: 10,
-  //     repeat: -1,
-  //   });
-
-  //   this.anims.create({
-  //     key: 'idle',
-  //     frames: [{ key: 'character', frame: 40 }],
-  //     frameRate: 20,
-  //   });
-  // }
-
-  // private createSpikeAnimations() {
-  //   this.anims.create({
-  //     key: 'extend',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 353,
-  //       end: 356,
-  //     }),
-  //     frameRate: 10,
-  //   });
-  //   this.anims.create({
-  //     key: 'retract',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 356,
-  //       end: 353,
-  //     }),
-  //     frameRate: 10,
-  //   });
-  // }
-
-  // private createEnemyAnimations(enemyType: string) {
-  //   if (enemyType === 'skeleton') {
-  //     this.anims.create({
-  //       key: 'skeleton_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 183,
-  //         end: 190,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  //   if (enemyType === 'ogre') {
-  //     this.anims.create({
-  //       key: 'ogre_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 375,
-  //         end: 382,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  //   if (enemyType === 'demon') {
-  //     this.anims.create({
-  //       key: 'demon_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 119,
-  //         end: 126,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  // }
 
   private createAnimations() {
     this.anims.create({
