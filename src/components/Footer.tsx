@@ -15,19 +15,26 @@ const Link = styled.a`
   }
 `;
 
+const Title = styled.h4`
+  text-align: center;
+`;
+
 const Footer = () => {
   return (
-    <GitHubList>
-      <Link href="https://github.com/Purple-Towel" target="_blank">
-        <GitHubIcon /> Angad Grewal
-      </Link>
-      <Link href="https://github.com/DPintoLL" target="_blank">
-        <GitHubIcon /> Diogo Pinto
-      </Link>
-      <Link href="https://github.com/rancewcampbell" target="_blank">
-        <GitHubIcon /> Rance Campbell
-      </Link>
-    </GitHubList>
+    <div>
+      <Title>Contributors</Title>
+      <GitHubList>
+        <Link href="https://github.com/Purple-Towel" target="_blank">
+          <GitHubIcon /> Angad Grewal
+        </Link>
+        <Link href="https://github.com/DPintoLL" target="_blank">
+          <GitHubIcon /> Diogo Pinto
+        </Link>
+        <Link href="https://github.com/rancewcampbell" target="_blank">
+          <GitHubIcon /> Rance Campbell
+        </Link>
+      </GitHubList>
+    </div>
   );
 };
 
