@@ -3,18 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.10.1",
+    "@material-ui/icons": "^4.9.1",
+    "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.0",
     "@types/webfontloader": "^1.6.32",
     "axios": "^0.18.1",
     "phaser": "^3.23.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "^3.4.0",
+    "styled-components": "^5.1.1",
     "typescript": "^3.9.5",
-    "webfontloader": "^1.6.28",
-    "@material-ui/core": "^4.10.1",
-    "@material-ui/icons": "^4.9.1",
-    "@types/styled-components": "^5.1.0",
-    "styled-components": "^5.1.1"
+    "webfontloader": "^1.6.28"
   },
   "scripts": {
     "start": "react-scripts start",
