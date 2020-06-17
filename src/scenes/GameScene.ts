@@ -12,20 +12,20 @@ import createAnimations from '../helpers/animations';
 import Box from '../game_components/Box';
 import Barrier from '../game_components/Barrier';
 import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
-import Spike from '../game_components/Spike';
+import Spike from '../game_components/spikes/Spike';
+import AlternatingSpike from '../game_components/spikes/AlternatingSpike';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
-  skeleton?: Enemy;
-  ogre?: Enemy;
-  demon?: Enemy;
-  box?: Box;
-  // private spikes: Phaser.GameObjects.Sprite[] = [];
-  spikes?: Spike;
-  private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
-  private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
-  barrier?: Barrier;
+  private skeleton?: Enemy;
+  private ogre?: Enemy;
+  private demon?: Enemy;
+  private box?: Box;
+  private spikes?: Spike;
+  private spikesAlternating1?: AlternatingSpike;
+  private spikesAlternating2?: AlternatingSpike;
+  private barrier?: Barrier;
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' = 'right';
   private moves: number = 50;
@@ -71,13 +71,9 @@ export default class Game extends Phaser.Scene {
 
     this.spikes = new Spike(this.layer);
 
-    this.spikesAlternating1 = this.layer
-      .createFromTiles(778, 11, { key: 'character', frame: 353 })
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
+    this.spikesAlternating1 = new AlternatingSpike(false, this.layer);
 
-    this.spikesAlternating2 = this.layer
-      .createFromTiles(779, 11, { key: 'character', frame: 356 })
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
+    this.spikesAlternating2 = new AlternatingSpike(true, this.layer);
 
     this.player = this.layer
       .createFromTiles(400, 11, { key: 'character', frame: 40 })
@@ -105,7 +101,6 @@ export default class Game extends Phaser.Scene {
 
     // insert player and create necessary animations
     this.player?.setOrigin(0);
-    // this.createAnimations();
 
     createAnimations(this);
 
@@ -332,39 +327,51 @@ export default class Game extends Phaser.Scene {
       return this.decrementMoves();
     }
 
+    let hurt1 = true;
+    let hurt2 = false;
     if (this.steps % 2 === 0) {
-      for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play('extend');
+      hurt1 = true;
+      hurt2 = false;
+      if (this.spikesAlternating1) {
+        for (let sprite of this.spikesAlternating1.spikes) {
+          sprite.anims.play('extend');
+        }
       }
-      for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play('retract');
+      if (this.spikesAlternating2) {
+        for (let sprite of this.spikesAlternating2.spikes) {
+          sprite.anims.play('retract');
+        }
       }
     }
 
-    if (this.steps % 2 === 1) {
-      for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play('retract');
+    if (this.steps % 2 !== 0) {
+      hurt1 = false;
+      hurt2 = true;
+      if (this.spikesAlternating1) {
+        for (let sprite of this.spikesAlternating1.spikes) {
+          sprite.anims.play('retract');
+        }
       }
-      for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play('extend');
+      if (this.spikesAlternating2) {
+        for (let sprite of this.spikesAlternating2.spikes) {
+          sprite.anims.play('extend');
+        }
       }
     }
 
     // check if square is alternating spike
-    const spikeAlternating1 = this.getSpikeAlternating1(x, y);
-    const spikeAlternating2 = this.getSpikeAlternating2(x, y);
-    if (spikeAlternating1) {
-      const canHurt1 = this.canSpikeAlternating1Hurt();
-      if (canHurt1) {
+    const Alternating1 = this.spikesAlternating1?.getSpikeAlternating(x, y);
+    const Alternating2 = this.spikesAlternating2?.getSpikeAlternating(x, y);
+    if (Alternating1) {
+      if (hurt1) {
         damageIndicator(this.player!, this.sound.add('damage'));
-        return this.decrementMoves();
+        this.decrementMoves();
       }
     }
-    if (spikeAlternating2) {
-      const canHurt2 = this.canSpikeAlternating2Hurt();
-      if (canHurt2) {
+    if (Alternating2) {
+      if (hurt2) {
         damageIndicator(this.player!, this.sound.add('damage'));
-        return this.decrementMoves();
+        this.decrementMoves();
       }
     }
   }
@@ -444,32 +451,6 @@ export default class Game extends Phaser.Scene {
     if (tile.index === index) {
       return tile;
     }
-  }
-
-  private getSpikeAlternating1(x: number, y: number) {
-    return this.spikesAlternating1.find(spikesAlternating1 => {
-      const rect = spikesAlternating1.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private getSpikeAlternating2(x: number, y: number) {
-    return this.spikesAlternating2.find(spikesAlternating2 => {
-      const rect = spikesAlternating2.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private canSpikeAlternating1Hurt() {
-    if (this.steps % 2 === 0) {
-      return true;
-    } else return false;
-  }
-
-  private canSpikeAlternating2Hurt() {
-    if (this.steps % 2 === 1) {
-      return true;
-    } else return false;
   }
 
   // decrement by 1 if no argument passed
