@@ -14,6 +14,7 @@ import Barrier from '../game_components/Barrier';
 import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
 import Spike from '../game_components/spikes/Spike';
 import AlternatingSpike from '../game_components/spikes/AlternatingSpike';
+import Player from '../game_components/Player';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -75,9 +76,7 @@ export default class Game extends Phaser.Scene {
 
     this.spikesAlternating2 = new AlternatingSpike(true, this.layer);
 
-    this.player = this.layer
-      .createFromTiles(400, 11, { key: 'character', frame: 40 })
-      .pop();
+    this.player = new Player(this.layer).player;
 
     this.demon = new Enemy(DEMON, this.layer);
     this.skeleton = new Enemy(SKELETON, this.layer);
