@@ -10,6 +10,7 @@ import Level from '../interfaces/Level';
 import BaseTween from '../interfaces/BaseTween';
 import damageIndicator from '../helpers/damageIndicator';
 import createAnimations from '../helpers/animations';
+import addSoundEffects from '../helpers/soundEffects';
 import Box from '../game_components/Box';
 import Barrier from '../game_components/Barrier';
 import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
@@ -119,12 +120,7 @@ export default class Game extends Phaser.Scene {
       delay: 0,
     });
     this.bgMusic.play();
-    this.sound.add('audio_box_drag', { volume: 0.4 });
-    this.sound.add('audio_wall_bump', { volume: 0.5 });
-    this.sound.add('audio_monster_death_1');
-    this.sound.add('audio_monster_death_2');
-    this.sound.add('punch');
-    this.sound.add('kick');
+    addSoundEffects(this);
 
     // bind keys to special functions
     this.input.keyboard.once('keydown-R', this.resetLevel, this);
@@ -533,7 +529,7 @@ export default class Game extends Phaser.Scene {
   // transisition to gameover scene
   private gameOver() {
     this.player?.setTint(0xff0000);
-    this.sound.add('game_over').play();
+    this.sound.play('game_over');
     this.input.keyboard.enabled = false;
     this.isGameOver = false;
     setTimeout(() => {
