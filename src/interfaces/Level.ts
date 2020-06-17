@@ -1,6 +1,4 @@
-interface Level {
+export default interface Level {
   map: number[][];
   moves: number;
 }
-
-export default Level;

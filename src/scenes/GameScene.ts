@@ -326,11 +326,11 @@ export default class Game extends Phaser.Scene {
       return this.decrementMoves();
     }
 
-    let hurt1 = true;
-    let hurt2 = false;
+    let extended1 = true;
+    let extended2 = false;
     if (this.steps % 2 === 0) {
-      hurt1 = true;
-      hurt2 = false;
+      extended1 = true;
+      extended2 = false;
       if (this.spikesAlternating1) {
         for (let sprite of this.spikesAlternating1.spikes) {
           sprite.anims.play('extend');
@@ -344,8 +344,8 @@ export default class Game extends Phaser.Scene {
     }
 
     if (this.steps % 2 !== 0) {
-      hurt1 = false;
-      hurt2 = true;
+      extended1 = false;
+      extended2 = true;
       if (this.spikesAlternating1) {
         for (let sprite of this.spikesAlternating1.spikes) {
           sprite.anims.play('retract');
@@ -358,17 +358,25 @@ export default class Game extends Phaser.Scene {
       }
     }
 
-    // check if square is alternating spike
+    this.checkAlternating(x, y, extended1, extended2);
+  }
+
+  private checkAlternating(
+    x: number,
+    y: number,
+    extended1: boolean,
+    extended2: boolean
+  ) {
     const Alternating1 = this.spikesAlternating1?.getSpikeAlternating(x, y);
     const Alternating2 = this.spikesAlternating2?.getSpikeAlternating(x, y);
     if (Alternating1) {
-      if (hurt1) {
+      if (extended1) {
         damageIndicator(this.player!, this.sound.add('damage'));
         this.decrementMoves();
       }
     }
     if (Alternating2) {
-      if (hurt2) {
+      if (extended2) {
         damageIndicator(this.player!, this.sound.add('damage'));
         this.decrementMoves();
       }
