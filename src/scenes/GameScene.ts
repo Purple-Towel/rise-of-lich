@@ -652,7 +652,9 @@ export default class Game extends Phaser.Scene {
     this.currentLevel++;
     setTimeout(() => {
       if (this.currentLevel > this.levels.length) {
-        this.scene.start("victory");
+        const currentMoveCount = parseInt(localStorage.getItem("numOfMoves")!);
+        const updatedMoveCount = (currentMoveCount || 0) + this.steps;
+        this.scene.start("victory", { stepsTaken: updatedMoveCount });
       } else {
         this.sound.add("win").play();
         this.scene.start("transition", {

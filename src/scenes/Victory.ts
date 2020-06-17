@@ -6,20 +6,61 @@ export default class Victory extends Phaser.Scene {
     super("victory");
   }
 
-  create() {
+  create(steps: { stepsTaken: number }) {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    // localStorage.clear();
-    const finalMoveCount = localStorage.getItem("numOfMoves");
-    let highScores = localStorage.getItem("highScores");
-    if (highScores) highScores = JSON.parse(highScores);
-    console.log(typeof highScores);
-    console.log(highScores);
+    let finalMoveCount = steps.stepsTaken;
+    let playerName = "Diogo";
 
-    let highScore = true;
+    console.log("Victory -> create -> finalMoveCount", finalMoveCount);
 
-    let playerName = "Diogo"; //we'll ask player for input
+    // if (localStorage.getItem("numOfMoves")) {
+    //   finalMoveCount = parseInt(localStorage.getItem("numOfMoves")!);
+    //   console.log("Victory -> create -> finalMoveCount", finalMoveCount);
+    // }
+
+    interface Scores {
+      name: string;
+      score: number;
+    }
+    let highScores: Scores = JSON.parse(localStorage.getItem("highScores")!);
+    console.log("highScores before IF", highScores);
+    let highScore = false;
+
+    if (!highScores) {
+      console.log("High Scores were not retrieved properly.");
+    } else if (Array.isArray(highScores)) {
+      // sort highScores from smallest number of steps
+      highScores.sort((a, b) => a.score - b.score);
+
+      console.log("highScores after if Array.isArray", highScores);
+
+      // let insertionIndex = 0;
+      for (let i = 0; i <= highScores.length - 1; i++) {
+        if (finalMoveCount < highScores[i].score) {
+          highScore = true;
+          highScores.splice(i, 0, {
+            name: `${playerName}`,
+            score: finalMoveCount,
+          });
+          break;
+        }
+      }
+    }
+
+    console.log("Victory -> create -> highScores", highScores);
+
+    //now we have the object. THEN:
+    // 1. When user finishes the game, we sort the array
+    // 2. Loop over the sorted array and see if his score is less than the current ones, starting with the pos.1
+
+    // 3. Then we will add a new score to the list appending the position key with right position
+    // 4. Save the new high scores to localStorage and clear the level and steps
+    // localStorage.removeItem("level");
+    // localStorage.removeItem("numOfMoves");
+
+    const tempVarNewHighScore = 996;
 
     let message = `You took ${finalMoveCount} steps to escape the dungeon.`;
 
@@ -47,7 +88,7 @@ export default class Victory extends Phaser.Scene {
         fontFamily: "Metal Mania",
         color: "#f00",
       })
-      .setOrigin(0.5);
+      .setOrigin(0.4);
 
     const enter = this.add
       .text(width * 0.5, height * 0.75, message, {

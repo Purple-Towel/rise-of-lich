@@ -14,8 +14,8 @@ export default class Transition extends Phaser.Scene {
 
     localStorage.setItem("level", currentLevel.toString());
 
-    const currentMoveCount = Number(localStorage.getItem("numOfMoves"));
-    const updatedMoveCount = currentMoveCount + stepsTaken;
+    const currentMoveCount = parseInt(localStorage.getItem("numOfMoves")!);
+    const updatedMoveCount = (currentMoveCount || 0) + stepsTaken;
     localStorage.setItem("numOfMoves", updatedMoveCount.toString());
 
     this.add
