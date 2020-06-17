@@ -54,7 +54,6 @@ export default class Game extends Phaser.Scene {
     const { currentLevel, steps } = d;
     this.currentLevel = currentLevel;
     this.steps = steps;
-    this.facing = 'right';
     const map = this.make.tilemap({
       data: this.levels[this.currentLevel - 1].map,
       tileWidth: 16,
