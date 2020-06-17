@@ -10,6 +10,7 @@ import Level from '../interfaces/Level';
 import damageIndicator from '../helpers/damageIndicator';
 import createAnimations from '../helpers/animations';
 import Box from '../game_components/Box';
+import Barrier from '../game_components/Barriers';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -23,7 +24,8 @@ export default class Game extends Phaser.Scene {
   private spikes: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
-  private barriers: Phaser.GameObjects.Sprite[] = [];
+  // private barriers: Phaser.GameObjects.Sprite[] = [];
+  barrier?: Barrier;
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' = 'right';
   private moves: number = 50;
@@ -63,9 +65,7 @@ export default class Game extends Phaser.Scene {
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
     // construct barriers to movement from tiles
-    this.barriers = this.layer
-      .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
-      .map(barrier => barrier.setOrigin(0));
+    this.barrier = new Barrier(this.layer);
 
     this.spikes = this.layer
       .createFromTiles(777, 11, { key: 'character', frame: 356 })
@@ -78,10 +78,6 @@ export default class Game extends Phaser.Scene {
     this.spikesAlternating2 = this.layer
       .createFromTiles(779, 11, { key: 'character', frame: 356 })
       .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
-
-    // this.boxes = this.layer
-    //   .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
-    //   .map(box => box.setOrigin(0));
 
     this.box = new Box(this.layer);
 
@@ -436,7 +432,7 @@ export default class Game extends Phaser.Scene {
       return false;
     }
 
-    const barrier = this.getBarrierAt(x, y);
+    const barrier = this.barrier?.getBarrierAt(x, y);
     if (barrier) {
       return true;
     }
@@ -462,14 +458,6 @@ export default class Game extends Phaser.Scene {
   private getEnemyAt(x: number, y: number) {
     return this.enemies?.find(enemy => {
       const rect = enemy.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  // returns a barrier of movement based on x & y coords
-  private getBarrierAt(x: number, y: number) {
-    return this.barriers.find(barrier => {
-      const rect = barrier.getBounds();
       return rect.contains(x, y);
     });
   }
