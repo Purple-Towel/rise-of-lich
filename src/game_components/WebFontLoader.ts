@@ -1,3 +1,5 @@
+// load font into Phaser
+
 import Phaser from 'phaser';
 
 import WebFontLoader from 'webfontloader';

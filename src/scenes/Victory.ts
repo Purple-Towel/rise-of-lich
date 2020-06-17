@@ -1,6 +1,7 @@
-import Phaser from "phaser";
-import TextBlink from "../game_components/TextBlink";
-import Game from "../components/Game";
+// Victory scene when game beaten
+
+import Phaser from 'phaser';
+import TextBlink from '../game_components/TextBlink';
 
 export default class Victory extends Phaser.Scene {
   private highScore: boolean = false;
@@ -139,6 +140,7 @@ export default class Victory extends Phaser.Scene {
 
     TextBlink.flashElement(this, enter);
 
+    // restart the game
     this.input.keyboard.once(
       "keydown-ENTER",
       () => {

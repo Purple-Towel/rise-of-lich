@@ -1,5 +1,7 @@
-import Phaser from "phaser";
-import TextBlink from "../game_components/TextBlink";
+// Level Complete scene
+
+import Phaser from 'phaser';
+import TextBlink from '../game_components/TextBlink';
 
 export default class Transition extends Phaser.Scene {
   constructor() {
@@ -12,6 +14,7 @@ export default class Transition extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
+    // save current level into localStorage
     localStorage.setItem("level", currentLevel.toString());
 
     const currentMoveCount = parseInt(localStorage.getItem("numOfMoves")!);
@@ -43,7 +46,7 @@ export default class Transition extends Phaser.Scene {
       .text(
         width * 0.5,
         height * 0.75,
-        "Press enter to continue or r to retry",
+        'Press ENTER to continue or R to retry',
         {
           fontFamily: "Metal Mania",
           fontSize: 16,
@@ -54,6 +57,7 @@ export default class Transition extends Phaser.Scene {
 
     TextBlink.flashElement(this, next);
 
+    // restart level when R pressed
     this.input.keyboard.once(
       "keydown-R",
       () => {
@@ -65,6 +69,8 @@ export default class Transition extends Phaser.Scene {
       },
       this
     );
+
+    // start next level when ENTER pressed
     this.input.keyboard.once(
       "keydown-ENTER",
       () => {

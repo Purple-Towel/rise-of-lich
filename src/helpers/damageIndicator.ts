@@ -1,4 +1,6 @@
-import Phaser from "phaser";
+// function to display sprite taking damage
+
+import Phaser from 'phaser';
 
 const damageIndicator = (
   player: Phaser.GameObjects.Sprite,

@@ -1,7 +1,10 @@
+// helper to implement blinking text in the Phaser game
+import Phaser from 'phaser';
+
 export default class TextBlink {
   static flashElement(
-    scene,
-    element,
+    scene: Phaser.Scene,
+    element: Phaser.GameObjects.Text,
     repeat = true,
     easing = 'Linear',
     overallDuration = 1500,
@@ -10,6 +13,7 @@ export default class TextBlink {
     if (scene && element) {
       let flashDuration = overallDuration - visiblePauseDuration / 2;
 
+      // builds a sequence of tweens
       scene.tweens.timeline({
         tweens: [
           {

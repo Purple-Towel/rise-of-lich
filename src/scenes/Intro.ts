@@ -1,5 +1,7 @@
-import Phaser from "phaser";
-import TextBlink from "../game_components/TextBlink";
+// Introduction scene
+
+import Phaser from 'phaser';
+import TextBlink from '../game_components/TextBlink';
 
 export default class Intro extends Phaser.Scene {
   constructor() {
@@ -76,6 +78,7 @@ export default class Intro extends Phaser.Scene {
     } else {
       message = "Press Enter to start";
     }
+
     this.anims.create({
       key: "lich-idle",
       frames: this.anims.generateFrameNumbers("lich", { start: 0, end: 5 }),
@@ -103,6 +106,7 @@ export default class Intro extends Phaser.Scene {
 
     TextBlink.flashElement(this, enter);
 
+    // Restart level when R is pressed
     this.input.keyboard.once(
       "keydown-R",
       () => {
@@ -111,6 +115,8 @@ export default class Intro extends Phaser.Scene {
       },
       this
     );
+
+    // Play next level when ENTER is pressed
     this.input.keyboard.once(
       "keydown-ENTER",
       () => {

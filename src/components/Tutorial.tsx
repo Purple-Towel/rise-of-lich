@@ -43,12 +43,14 @@ const Button = styled.button`
 const Tutorial = () => {
   const MOVE = 'Movement';
   const RESET = 'Reset';
+  const MUTE = 'Mute';
   const STAMINA = 'Stamina';
   const CRATES = 'Crates';
   const LADDERS = 'Ladders';
   const SPIKES = 'Spikes';
+  const ENEMIES = 'Enemies';
 
-  const selections = [MOVE, RESET, CRATES, LADDERS, STAMINA, SPIKES];
+  const selections = [MOVE, RESET, MUTE, CRATES, LADDERS, STAMINA, SPIKES, ENEMIES];
 
   const Buttons = selections.map((selection, index) => {
     return (
@@ -96,43 +98,64 @@ const Tutorial = () => {
         </Paragraph>
       )}
       {selected === selections[2] && (
-        <Image src="assets/box.png" alt="crates" />
+        <Image src="assets/m_button.png" alt="m-button" />
       )}
       {selected === selections[2] && (
+        <Paragraph>
+          Mallory's Mute, a useful rune that can turn off all annoying sounds. Useful if you want to concentrate or just find the noise overwhelming. (Toggles mute on/off)
+        </Paragraph>
+      )}
+      {selected === selections[3] && (
+        <Image src="assets/box.png" alt="crates" />
+      )}
+      {selected === selections[3] && (
         <Paragraph>
           The Lich has left a lot of crates lying around cluttering up the
           place. They're heavy and hard to open, but you can shove them around
           if they are blocking the way, at the cost of some Stamina.
         </Paragraph>
       )}
-      {selected === selections[3] && (
+      {selected === selections[4] && (
         <Image src="assets/ladder.png" alt="ladder" />
       )}
-      {selected === selections[3] && (
+      {selected === selections[4] && (
         <Paragraph>
           Why does the Lich have these lying around? He can fly and teleport!
           Luckily these all lead to the exit and one step closer to your
           freedom.
         </Paragraph>
       )}
-      {selected === selections[4] && (
+      {selected === selections[5] && (
         <Image src="assets/hud-icon.png" alt="stamina-icon" />
       )}
-      {selected === selections[4] && (
+      {selected === selections[5] && (
         <Paragraph>
           This cursed orb displays how much Stamina you have. Most actions you
           take will cost Stamina and running out will activate the Lich's curse
           and cause a game over.
         </Paragraph>
       )}
-      {selected === selections[5] && (
+      {selected === selections[6] && (
         <Image src="assets/spikes.png" alt="spikes" />
       )}
-      {selected === selections[5] && (
+      {selected === selections[6] && (
         <Paragraph>
           These spike traps are somewhat common through the Lich's dungeon.
           Stepping on them takes twice as much Stamina as usual, so try not to
           dance on them, as fun as it may seem.
+        </Paragraph>
+      )}
+      {selected === selections[7] && (
+        <ImageContainer>
+          <Image src="assets/enemy1.png" alt="enemy1" />
+          <Image src="assets/enemy2.png" alt="enemy2" />
+          <Image src="assets/enemy3.png" alt="enemy3" />
+        </ImageContainer>
+      )}
+      {selected === selections[7] && (
+        <Paragraph>
+          Despite their fearsome appearances, these creatures don't exactly do anything other than stand there, menacingly.
+          In actuality they are illusions, created by the evil lich. Feel free to push them around and into things to 'kill' them.
         </Paragraph>
       )}
     </Container>

@@ -5,6 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.10.1",
     "@material-ui/icons": "^4.9.1",
+<<<<<<< HEAD
+=======
+    "@types/react-dom": "^16.9.8",
+>>>>>>> 2d168e8672f0a35fae1afad5d551115b1f24140e
     "@types/styled-components": "^5.1.0",
     "@types/webfontloader": "^1.6.32",
     "axios": "^0.18.1",
