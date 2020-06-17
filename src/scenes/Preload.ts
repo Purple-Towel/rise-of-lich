@@ -52,7 +52,24 @@ export default class Preload extends Phaser.Scene {
     this.load.audio("audio_monster_death_2", "assets/audio/monster_death2.ogg");
     this.load.audio("punch", "assets/audio/punch.ogg");
     this.load.audio("kick", "assets/audio/kick.ogg");
+
+    //load plugin to handle text input
+    this.load.html("nameInput", "assets/nameInput.html");
+    this.load.scenePlugin({
+      key: "rexuiplugin",
+      url:
+        "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js",
+      sceneKey: "rexUI",
+    });
+
+    this.load.plugin(
+      "rextexteditplugin",
+      "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js",
+      true
+    );
   }
+
+  update() {}
 
   create() {
     this.scene.start("intro");
