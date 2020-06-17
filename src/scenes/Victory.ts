@@ -4,19 +4,6 @@ import Game from "../components/Game";
 
 export default class Victory extends Phaser.Scene {
   private highScore: boolean = false;
-  // private function:void setHighSCore(playerName: string, finalMoveCount: number, highScores: any) {
-  //     for (let i = 0; i <= highScores.length - 1; i++) {
-  //       if (finalMoveCount < highScores[i].score) {
-  //         this.highScore = true;
-  //         highScores.splice(i, 0, {
-  //           name: `${playerName}`,
-  //           score: finalMoveCount,
-  //         });
-  //         break;
-  //       }
-  //     }
-  //     localStorage.setItem("highScores", JSON.stringify(highScores));
-  //   }
 
   constructor() {
     super("victory");
@@ -28,20 +15,18 @@ export default class Victory extends Phaser.Scene {
 
     let finalMoveCount = steps.stepsTaken;
     let playerName = "";
-    // Deal with player name:
-    // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.Events.html#event:ANY_KEY_UP
-    // this.input.keyboard.on("keyup", this.keyListener, this);
 
-    interface Scores {
-      name: string;
-      score: number;
-    }
-    let highScores: Scores = JSON.parse(localStorage.getItem("highScores")!);
+    // interface Scores {
+    //   name: string;
+    //   score: number;
+    // }
+    let highScores = JSON.parse(localStorage.getItem("highScores")!);
     console.log("highScores before IF", highScores);
 
     if (Array.isArray(highScores) && highScores.length >= 1) {
       // sort highScores from smallest number of steps
       highScores.sort((a, b) => a.score - b.score);
+      console.log("highScores after sort", highScores);
       // for (let i = 0; i <= highScores.length - 1; i++) {
       //   if (finalMoveCount < highScores[i].score) {
       //     highScore = true;
@@ -58,15 +43,21 @@ export default class Victory extends Phaser.Scene {
     <input type="text" name="nameField" placeholder="Enter your name" style="font-size: 4px"/>
     <input type="button" name="saveButton" value="Save High Score" style="font-size: 4px" />
     `;
-    this.add.text(10, height * 0.4, "Please enter your name:", {
+    // TODO this text has to be removed after user input
+    let myText = this.add.text(10, height * 0.4, "Please enter your name:", {
       color: "red",
       fontSize: "12px",
     });
+    myText.visible = true;
 
     let nameInputForm = this.add.dom(50, 100).createFromHTML(form);
     nameInputForm.addListener("click");
+    let setScoreFlag = false;
 
-    nameInputForm.on("click", function (this: any, event: any) {
+    nameInputForm.on("click", function (
+      this: Phaser.GameObjects.DOMElement,
+      event: any
+    ) {
       if (event.target.name === "saveButton") {
         let textInput = document.getElementsByTagName("input")[0];
         console.log("Intro -> create -> textInput", textInput.value);
@@ -78,9 +69,19 @@ export default class Victory extends Phaser.Scene {
           //  Hide the login nameInputForm
           this.setVisible(false);
           playerName = textInput.value;
-
-          //Call a function that will save the highScores with player name (set the localStorage)
-          this.setHighSCore(playerName, finalMoveCount, highScores);
+          setScoreFlag = true;
+          myText.visible = false;
+          for (let i = 0; i <= highScores.length - 1; i++) {
+            if (finalMoveCount < highScores[i].score) {
+              // Victory.highScore = true;
+              highScores.splice(i, 0, {
+                name: `${playerName}`,
+                score: finalMoveCount,
+              });
+              break;
+            }
+          }
+          localStorage.setItem("highScores", JSON.stringify(highScores));
         } else {
           //  Flash the prompt
           this.scene.tweens.add({
@@ -94,8 +95,12 @@ export default class Victory extends Phaser.Scene {
       }
     });
 
+    // Call a function that will save the highScores with player name (set the localStorage)
+    if (setScoreFlag) this.setHighScore(playerName, finalMoveCount, highScores);
+
     // Update highScores and clear save game states:
     // localStorage.setItem("highScores", JSON.stringify(highScores));
+
     localStorage.removeItem("level");
     localStorage.removeItem("numOfMoves");
 
@@ -145,6 +150,10 @@ export default class Victory extends Phaser.Scene {
   }
 
   setHighScore(playerName: string, finalMoveCount: number, highScores: any) {
+    console.log("setHighScore -> playerName", playerName);
+    console.log("setHighScore -> finalMoveCount", finalMoveCount);
+    console.log("setHighScore -> highScores", highScores);
+
     for (let i = 0; i <= highScores.length - 1; i++) {
       if (finalMoveCount < highScores[i].score) {
         this.highScore = true;
