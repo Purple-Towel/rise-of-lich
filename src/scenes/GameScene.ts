@@ -10,25 +10,21 @@ import Level from '../interfaces/Level';
 import damageIndicator from '../helpers/damageIndicator';
 import createAnimations from '../helpers/animations';
 import Box from '../game_components/Box';
-import Barrier from '../game_components/Barriers';
+import Barrier from '../game_components/Barrier';
 import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
+import Spike from '../game_components/Spike';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
-  // private enemy_skeleton?: Phaser.GameObjects.Sprite[];
   skeleton?: Enemy;
-  // private ogre?: Phaser.GameObjects.Sprite[];
   ogre?: Enemy;
-  // private demon?: Phaser.GameObjects.Sprite[];
   demon?: Enemy;
-  // private enemies?: Phaser.GameObjects.Sprite[];
-  // private boxes: Phaser.GameObjects.Sprite[] = [];
   box?: Box;
-  private spikes: Phaser.GameObjects.Sprite[] = [];
+  // private spikes: Phaser.GameObjects.Sprite[] = [];
+  spikes?: Spike;
   private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
   private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
-  // private barriers: Phaser.GameObjects.Sprite[] = [];
   barrier?: Barrier;
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' = 'right';
@@ -36,12 +32,8 @@ export default class Game extends Phaser.Scene {
   private isGameOver: boolean = false;
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
-<<<<<<< HEAD
   private stepsText?: Phaser.GameObjects.Text;
   private levels: Level[] = [level1, level2, level3, level4, level5];
-=======
-  private levels = [level1, level2, level3, level4, level5];
->>>>>>> master
   private currentLevel: number = 1;
   private bgMusic!: Phaser.Sound.BaseSound;
   private mute: boolean = false;
@@ -77,9 +69,7 @@ export default class Game extends Phaser.Scene {
 
     this.box = new Box(this.layer);
 
-    this.spikes = this.layer
-      .createFromTiles(777, 11, { key: 'character', frame: 356 })
-      .map(spike => spike.setOrigin(0));
+    this.spikes = new Spike(this.layer);
 
     this.spikesAlternating1 = this.layer
       .createFromTiles(778, 11, { key: 'character', frame: 353 })
@@ -96,13 +86,6 @@ export default class Game extends Phaser.Scene {
     this.demon = new Enemy(DEMON, this.layer);
     this.skeleton = new Enemy(SKELETON, this.layer);
     this.ogre = new Enemy(OGRE, this.layer);
-    // if (this.skeleton && this.ogre && this.demon) {
-    //   this.enemies = [
-    //     ...this.skeleton.enemies,
-    //     ...this.ogre.enemies,
-    //     ...this.demon.enemies,
-    //   ];
-    // }
 
     // create mute text if state is muted
     this.muteMessage = this.add
@@ -340,7 +323,7 @@ export default class Game extends Phaser.Scene {
     }
 
     //check if square is spike
-    const spike = this.getSpikeAt(x, y);
+    const spike = this.spikes?.getSpikeAt(x, y);
 
     if (spike) {
       if (this.player) {
@@ -452,13 +435,6 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  // private getEnemyAt(x: number, y: number) {
-  //   return this.enemies?.find(enemy => {
-  //     const rect = enemy.getBounds();
-  //     return rect.contains(x, y);
-  //   });
-  // }
-
   // gets any tile you specify based on the index it is in the tilesheet
   private getTileAt(x: number, y: number, index: number) {
     if (!this.layer) return undefined;
@@ -468,13 +444,6 @@ export default class Game extends Phaser.Scene {
     if (tile.index === index) {
       return tile;
     }
-  }
-
-  private getSpikeAt(x: number, y: number) {
-    return this.spikes.find(spikes => {
-      const rect = spikes.getBounds();
-      return rect.contains(x, y);
-    });
   }
 
   private getSpikeAlternating1(x: number, y: number) {
