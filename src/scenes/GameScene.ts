@@ -7,6 +7,7 @@ import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
 import Level from '../interfaces/Level';
+import BaseTween from '../interfaces/BaseTween';
 import damageIndicator from '../helpers/damageIndicator';
 import createAnimations from '../helpers/animations';
 import Box from '../game_components/Box';
@@ -241,7 +242,7 @@ export default class Game extends Phaser.Scene {
       this.ogre?.getEnemyAt(x, y) ||
       this.demon?.getEnemyAt(x, y);
 
-    const baseTween = {
+    const baseTween: BaseTween = {
       [axis]: directionXY[direction],
       duration: 400,
       onStart: () => {
@@ -257,23 +258,10 @@ export default class Game extends Phaser.Scene {
       onComplete: () => {
         this.player?.anims.play('idle', true);
       },
-      onCompleteScope: this,
     };
 
     if (box) {
-      // move box
-      if (this.tweens.isTweening(box)) {
-        return undefined;
-      }
-      if (!this.checkBoxMovement(box, axis, direction)) {
-        return undefined;
-      }
-      this.sound.play('audio_box_drag');
-
-      this.tweens.add({
-        ...baseTween,
-        targets: box,
-      });
+      this.moveBox(box, axis, direction, baseTween);
     } else if (enemy) {
       // move enemy
       if (this.tweens.isTweening(enemy)) {
@@ -301,6 +289,7 @@ export default class Game extends Phaser.Scene {
           y: nY,
           scale: 0,
           rotation: 90,
+          onCompleteScope: this,
         });
         return undefined;
       }
@@ -313,6 +302,7 @@ export default class Game extends Phaser.Scene {
       this.tweens.add({
         ...baseTween,
         targets: this.player,
+        onCompleteScope: this,
       });
     }
 
@@ -329,6 +319,28 @@ export default class Game extends Phaser.Scene {
     const { extended1, extended2 } = this.playSpikeAnim();
 
     this.checkAlternating(x, y, extended1, extended2);
+  }
+
+  private moveBox(
+    box: Phaser.GameObjects.Sprite,
+    axis: string,
+    direction: 'positive' | 'negative',
+    baseTween: BaseTween
+  ) {
+    // move box
+    if (this.tweens.isTweening(box)) {
+      return undefined;
+    }
+    if (!this.checkBoxMovement(box, axis, direction)) {
+      return undefined;
+    }
+    this.sound.play('audio_box_drag');
+
+    this.tweens.add({
+      ...baseTween,
+      targets: box,
+      onCompleteScope: this,
+    });
   }
 
   private playSpikeAnim() {
