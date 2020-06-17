@@ -66,19 +66,12 @@ export default class Game extends Phaser.Scene {
     const tiles = map.addTilesetImage('tiles');
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
-    // construct barriers to movement from tiles
     this.barrier = new Barrier(this.layer);
-
-    this.box = new Box(this.layer);
-
     this.spikes = new Spike(this.layer);
-
     this.spikesAlternating1 = new AlternatingSpike(false, this.layer);
-
     this.spikesAlternating2 = new AlternatingSpike(true, this.layer);
-
+    this.box = new Box(this.layer);
     this.player = new Player(this.layer).player;
-
     this.demon = new Enemy(DEMON, this.layer);
     this.skeleton = new Enemy(SKELETON, this.layer);
     this.ogre = new Enemy(OGRE, this.layer);
@@ -213,12 +206,6 @@ export default class Game extends Phaser.Scene {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
 
-    // if next move has wall escape early
-    if (this.hasObstruction(x, y)) {
-      this.sound.play('audio_wall_bump');
-      return undefined;
-    }
-
     // if you reach the finishing tile, start the next scene
     const levelFinished =
       this.getTileAt(x, y, 39) &&
@@ -230,17 +217,16 @@ export default class Game extends Phaser.Scene {
       this.transition();
     }
 
+    // if next move has wall escape early
+    if (this.hasObstruction(x, y)) {
+      this.sound.play('audio_wall_bump');
+      return undefined;
+    }
+
     const directionXY = {
       positive: '+=16',
       negative: '-=16',
     };
-
-    const box = this.box?.getBoxAt(x, y);
-    // const enemy = this.getEnemyAt(x, y);
-    const enemy =
-      this.skeleton?.getEnemyAt(x, y) ||
-      this.ogre?.getEnemyAt(x, y) ||
-      this.demon?.getEnemyAt(x, y);
 
     const baseTween: BaseTween = {
       [axis]: directionXY[direction],
@@ -260,17 +246,19 @@ export default class Game extends Phaser.Scene {
       },
     };
 
+    const box = this.box?.getBoxAt(x, y);
+    // const enemy = this.getEnemyAt(x, y);
+    const enemy =
+      this.skeleton?.getEnemyAt(x, y) ||
+      this.ogre?.getEnemyAt(x, y) ||
+      this.demon?.getEnemyAt(x, y);
+
     if (box) {
       this.moveBox(box, axis, direction, baseTween);
     } else if (enemy) {
       this.moveEnemy(enemy, x, y, axis, direction, baseTween);
     } else {
-      // move player
-      this.tweens.add({
-        ...baseTween,
-        targets: this.player,
-        onCompleteScope: this,
-      });
+      this.movePlayer(baseTween);
     }
 
     //check if square is spike
@@ -285,9 +273,20 @@ export default class Game extends Phaser.Scene {
 
     const { extended1, extended2 } = this.playSpikeAnim();
 
-    this.checkAlternating(x, y, extended1, extended2);
+    this.checkAlternatingDamage(x, y, extended1, extended2);
   }
 
+  // moves only the player sprite
+  private movePlayer(baseTween: BaseTween) {
+    // move player
+    this.tweens.add({
+      ...baseTween,
+      targets: this.player,
+      onCompleteScope: this,
+    });
+  }
+
+  // moves only enemy sprite
   private moveEnemy(
     enemy: Phaser.GameObjects.Sprite,
     x: number,
@@ -332,6 +331,7 @@ export default class Game extends Phaser.Scene {
     });
   }
 
+  // moves only box
   private moveBox(
     box: Phaser.GameObjects.Sprite,
     axis: string,
@@ -354,6 +354,7 @@ export default class Game extends Phaser.Scene {
     });
   }
 
+  // plays spike animation and determines position of spikes
   private playSpikeAnim() {
     let extended1 = true;
     let extended2 = false;
@@ -389,7 +390,8 @@ export default class Game extends Phaser.Scene {
     return { extended1, extended2 };
   }
 
-  private checkAlternating(
+  // if spike is in extended position, deal damage
+  private checkAlternatingDamage(
     x: number,
     y: number,
     extended1: boolean,
