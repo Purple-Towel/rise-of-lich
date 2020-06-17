@@ -11,14 +11,18 @@ import damageIndicator from '../helpers/damageIndicator';
 import createAnimations from '../helpers/animations';
 import Box from '../game_components/Box';
 import Barrier from '../game_components/Barriers';
+import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
-  private enemy_skeleton?: Phaser.GameObjects.Sprite[];
-  private enemy_ogre?: Phaser.GameObjects.Sprite[];
-  private enemy_demon?: Phaser.GameObjects.Sprite[];
-  private enemies?: Phaser.GameObjects.Sprite[];
+  // private enemy_skeleton?: Phaser.GameObjects.Sprite[];
+  skeleton?: Enemy;
+  // private ogre?: Phaser.GameObjects.Sprite[];
+  ogre?: Enemy;
+  // private demon?: Phaser.GameObjects.Sprite[];
+  demon?: Enemy;
+  // private enemies?: Phaser.GameObjects.Sprite[];
   // private boxes: Phaser.GameObjects.Sprite[] = [];
   box?: Box;
   private spikes: Phaser.GameObjects.Sprite[] = [];
@@ -67,6 +71,8 @@ export default class Game extends Phaser.Scene {
     // construct barriers to movement from tiles
     this.barrier = new Barrier(this.layer);
 
+    this.box = new Box(this.layer);
+
     this.spikes = this.layer
       .createFromTiles(777, 11, { key: 'character', frame: 356 })
       .map(spike => spike.setOrigin(0));
@@ -79,38 +85,20 @@ export default class Game extends Phaser.Scene {
       .createFromTiles(779, 11, { key: 'character', frame: 356 })
       .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
 
-    this.box = new Box(this.layer);
-
     this.player = this.layer
       .createFromTiles(400, 11, { key: 'character', frame: 40 })
       .pop();
 
-    this.enemy_skeleton = this.layer
-      .createFromTiles(223, 11, {
-        key: 'character',
-      })
-      .map(e => e.setOrigin(0));
-
-    this.enemy_ogre = this.layer
-      .createFromTiles(224, 11, {
-        key: 'character',
-      })
-      .map(e => e.setOrigin(0));
-
-    this.enemy_demon = this.layer
-      .createFromTiles(222, 11, {
-        key: 'character',
-        frame: 119,
-      })
-      .map(e => e.setOrigin(0));
-
-    if (this.enemy_skeleton && this.enemy_ogre && this.enemy_demon) {
-      this.enemies = [
-        ...this.enemy_skeleton,
-        ...this.enemy_ogre,
-        ...this.enemy_demon,
-      ];
-    }
+    this.demon = new Enemy(DEMON, this.layer);
+    this.skeleton = new Enemy(SKELETON, this.layer);
+    this.ogre = new Enemy(OGRE, this.layer);
+    // if (this.skeleton && this.ogre && this.demon) {
+    //   this.enemies = [
+    //     ...this.skeleton.enemies,
+    //     ...this.ogre.enemies,
+    //     ...this.demon.enemies,
+    //   ];
+    // }
 
     // create mute text if state is muted
     this.muteMessage = this.add
@@ -174,19 +162,19 @@ export default class Game extends Phaser.Scene {
       return;
     }
 
-    if (this.enemy_skeleton) {
-      for (let skeleton of this.enemy_skeleton!) {
+    if (this.skeleton) {
+      for (let skeleton of this.skeleton.enemies!) {
         // avoids trying to play animation for killed enemies
         if (skeleton) skeleton.anims.play('skeleton_idle', true);
       }
     }
-    if (this.enemy_ogre) {
-      for (let ogre of this.enemy_ogre!) {
+    if (this.ogre) {
+      for (let ogre of this.ogre.enemies!) {
         if (ogre) ogre.anims.play('ogre_idle', true);
       }
     }
-    if (this.enemy_demon) {
-      for (let demon of this.enemy_demon!) {
+    if (this.demon) {
+      for (let demon of this.demon.enemies!) {
         if (!demon) {
           return;
         } else demon.anims.play('demon_idle', true);
@@ -267,7 +255,11 @@ export default class Game extends Phaser.Scene {
     };
 
     const box = this.box?.getBoxAt(x, y);
-    const enemy = this.getEnemyAt(x, y);
+    // const enemy = this.getEnemyAt(x, y);
+    const enemy =
+      this.skeleton?.getEnemyAt(x, y) ||
+      this.ogre?.getEnemyAt(x, y) ||
+      this.demon?.getEnemyAt(x, y);
 
     const baseTween = {
       [axis]: directionXY[direction],
@@ -449,18 +441,21 @@ export default class Game extends Phaser.Scene {
     if (
       this.hasObstruction(x, y) ||
       this.box?.getBoxAt(x, y) ||
-      this.getEnemyAt(x, y)
+      // this.getEnemyAt(x, y)
+      this.skeleton?.getEnemyAt(x, y) ||
+      this.ogre?.getEnemyAt(x, y) ||
+      this.demon?.getEnemyAt(x, y)
     ) {
       return true;
     }
   }
 
-  private getEnemyAt(x: number, y: number) {
-    return this.enemies?.find(enemy => {
-      const rect = enemy.getBounds();
-      return rect.contains(x, y);
-    });
-  }
+  // private getEnemyAt(x: number, y: number) {
+  //   return this.enemies?.find(enemy => {
+  //     const rect = enemy.getBounds();
+  //     return rect.contains(x, y);
+  //   });
+  // }
 
   // gets any tile you specify based on the index it is in the tilesheet
   private getTileAt(x: number, y: number, index: number) {
