@@ -36,8 +36,12 @@ export default class Game extends Phaser.Scene {
   private isGameOver: boolean = false;
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
+<<<<<<< HEAD
   private stepsText?: Phaser.GameObjects.Text;
   private levels: Level[] = [level1, level2, level3, level4, level5];
+=======
+  private levels = [level1, level2, level3, level4, level5];
+>>>>>>> master
   private currentLevel: number = 1;
   private bgMusic!: Phaser.Sound.BaseSound;
   private mute: boolean = false;
@@ -131,7 +135,6 @@ export default class Game extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.movesText.setShadow(1, 1);
-    // this.stepsText = this.add.text(16, 150, `Steps: ${this.steps}`);
 
     //-- Audio --
     //! Declared a config object for tweaking. Most of these are defaults
@@ -269,7 +272,6 @@ export default class Game extends Phaser.Scene {
         this.decrementMoves();
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
-        this.stepsText?.setText(`Steps: ${this.steps}`);
         if (this.moves <= 0) {
           this.bgMusic.pause();
           this.isGameOver = true;
