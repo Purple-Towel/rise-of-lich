@@ -263,40 +263,7 @@ export default class Game extends Phaser.Scene {
     if (box) {
       this.moveBox(box, axis, direction, baseTween);
     } else if (enemy) {
-      // move enemy
-      if (this.tweens.isTweening(enemy)) {
-        return undefined;
-      }
-      // if player moves against blocked enemy, enemy gets killed
-      if (!this.checkBoxMovement(enemy, axis, direction)) {
-        enemy.anims.pause();
-        enemy.setTint(0xff0000);
-        if (Math.floor(Math.random() * 10 + 1) % 2) {
-          this.sound.play('punch');
-          this.sound.play('audio_monster_death_1');
-        } else {
-          this.sound.play('kick');
-          this.sound.play('audio_monster_death_2');
-        }
-
-        // nX and nY were necessary to center animation on tile
-        let nX = x + 4;
-        let nY = y + 4;
-        this.tweens.add({
-          ...baseTween,
-          targets: enemy,
-          x: nX,
-          y: nY,
-          scale: 0,
-          rotation: 90,
-          onCompleteScope: this,
-        });
-        return undefined;
-      }
-      this.tweens.add({
-        ...baseTween,
-        targets: enemy,
-      });
+      this.moveEnemy(enemy, x, y, axis, direction, baseTween);
     } else {
       // move player
       this.tweens.add({
@@ -319,6 +286,50 @@ export default class Game extends Phaser.Scene {
     const { extended1, extended2 } = this.playSpikeAnim();
 
     this.checkAlternating(x, y, extended1, extended2);
+  }
+
+  private moveEnemy(
+    enemy: Phaser.GameObjects.Sprite,
+    x: number,
+    y: number,
+    axis: string,
+    direction: 'positive' | 'negative',
+    baseTween: BaseTween
+  ) {
+    // move enemy
+    if (this.tweens.isTweening(enemy)) {
+      return undefined;
+    }
+    // if player moves against blocked enemy, enemy gets killed
+    if (!this.checkBoxMovement(enemy, axis, direction)) {
+      enemy.anims.pause();
+      enemy.setTint(0xff0000);
+      if (Math.floor(Math.random() * 10 + 1) % 2) {
+        this.sound.play('punch');
+        this.sound.play('audio_monster_death_1');
+      } else {
+        this.sound.play('kick');
+        this.sound.play('audio_monster_death_2');
+      }
+
+      // nX and nY were necessary to center animation on tile
+      let nX = x + 4;
+      let nY = y + 4;
+      this.tweens.add({
+        ...baseTween,
+        targets: enemy,
+        x: nX,
+        y: nY,
+        scale: 0,
+        rotation: 90,
+        onCompleteScope: this,
+      });
+      return undefined;
+    }
+    this.tweens.add({
+      ...baseTween,
+      targets: enemy,
+    });
   }
 
   private moveBox(
