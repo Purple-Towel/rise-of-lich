@@ -326,6 +326,12 @@ export default class Game extends Phaser.Scene {
       return this.decrementMoves();
     }
 
+    const { extended1, extended2 } = this.playSpikeAnim();
+
+    this.checkAlternating(x, y, extended1, extended2);
+  }
+
+  private playSpikeAnim() {
     let extended1 = true;
     let extended2 = false;
     if (this.steps % 2 === 0) {
@@ -357,8 +363,7 @@ export default class Game extends Phaser.Scene {
         }
       }
     }
-
-    this.checkAlternating(x, y, extended1, extended2);
+    return { extended1, extended2 };
   }
 
   private checkAlternating(
