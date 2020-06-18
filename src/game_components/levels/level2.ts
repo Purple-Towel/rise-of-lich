@@ -1,4 +1,6 @@
-const level2 = {
+import Level from '../../interfaces/Level';
+
+const level2: Level = {
   map: [
     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5],
     [10, 11, 11, 11, 11, 49, 49, 11, 11, 11, 49, 49, 11, 11, 11, 25],
