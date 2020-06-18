@@ -47,7 +47,7 @@ export default class HighScores extends Phaser.Scene {
       }
     }
 
-    const message = "Press Enter to play again";
+    const message = "Press Enter to start game";
 
     const enter = this.add
       .text(width * 0.5, height * 0.9, message, {

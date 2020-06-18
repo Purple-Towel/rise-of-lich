@@ -32,6 +32,7 @@ export default class Intro extends Phaser.Scene {
     } else {
       message = "Press Enter to start";
     }
+    message += "\nPress H to see the High Scores";
 
     this.anims.create({
       key: "lich-idle",
@@ -79,5 +80,13 @@ export default class Intro extends Phaser.Scene {
       },
       this
     );
+
+    // load High Scores
+    this.input.keyboard.once("keydown-H", () => this.scene.start("highscores"));
+    // hack Victory screen
+    this.input.keyboard.once("keydown-V", () => {
+      localStorage.setItem("steps", "20");
+      this.scene.start("victory");
+    });
   }
 }

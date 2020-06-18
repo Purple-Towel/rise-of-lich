@@ -26,8 +26,8 @@ export default class Victory extends Phaser.Scene {
     let highScore = false;
 
     let form = `
-    <input type="text" name="nameField" placeholder="Enter your name" style="font-size: 4px"/>
-    <input type="button" name="saveButton" value="Save Your Score" style="font-size: 4px" />
+    <input class="user-input" type="text" name="nameField" placeholder="Enter your name" style="font-size: 4px"/>
+    <input class="user-input" type="button" name="saveButton" value="Save Your Score" style="font-size: 4px" />
     `;
     // let myText = this.add.text(10, height * 0.4, "Please enter your name:", {
     //   color: "red",

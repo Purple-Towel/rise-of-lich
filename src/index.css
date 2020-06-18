@@ -12,3 +12,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+input:focus,
+button:focus {
+  outline: none;
+}
+.user-input {
+  font-family: "Metal Mania", cursive;
+  color: #f00;
+  background-color: black;
+}
