@@ -85,7 +85,7 @@ export default class Game extends Phaser.Scene {
 
     //change the var to smoke if it works
     this.dust = this.layer
-      .createFromTiles(220, 11, { key: "smoke", frame: 0 })
+      .createFromTiles(220, 11, { key: "smoke", frame: 1 })
       .map((spr) => spr.setOrigin(0));
 
     // this.anims.create({
@@ -287,7 +287,7 @@ export default class Game extends Phaser.Scene {
       duration: 400,
       onStart: () => {
         this.player?.anims.play("move", true);
-        this.anims.play("smoke-puff", this.boxes[0]);
+        // this.anims.play("smoke-puff", this.boxes[0]);
         this.decrementMoves();
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
@@ -311,7 +311,7 @@ export default class Game extends Phaser.Scene {
         return undefined;
       }
       this.sound.play("audio_box_drag");
-      // this.anims.play("smoke-puff", box);
+      this.anims.play("smoke-puff", box);
 
       this.tweens.add({
         ...baseTween,
@@ -755,8 +755,8 @@ export default class Game extends Phaser.Scene {
     this.anims.create({
       key: "smoke-puff",
       frames: this.anims.generateFrameNumbers("smoke", {
-        start: 0,
-        end: 7,
+        start: 1,
+        end: 8,
       }),
       frameRate: 5,
     });
