@@ -16,7 +16,7 @@ export default class Intro extends Phaser.Scene {
     const title = "Rise of Lich: Revengeance";
     const currentLevel = parseInt(localStorage.getItem("level") as string) || 1;
 
-    const highScores = [
+    const highScores = JSON.parse(localStorage.getItem("highScores")!) || [
       { name: "jack", score: 995 },
       { name: "jill", score: 996 },
       { name: "joe", score: 997 },
