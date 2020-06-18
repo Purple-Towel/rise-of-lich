@@ -10,6 +10,7 @@ import Intro from "./scenes/Intro";
 import GameOver from "./scenes/GameOver";
 import Transition from "./scenes/Transition";
 import Victory from "./scenes/Victory";
+import HighScores from "./scenes/HighScores";
 
 const config = {
   type: Phaser.AUTO,
@@ -25,7 +26,7 @@ const config = {
       gravity: { y: 0 },
     },
   },
-  scene: [Preload, Intro, Game, GameOver, Transition, Victory],
+  scene: [Preload, Intro, Game, GameOver, Transition, Victory, HighScores],
   scale: {
     zoom: 3,
   },

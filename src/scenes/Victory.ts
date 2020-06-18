@@ -17,10 +17,6 @@ export default class Victory extends Phaser.Scene {
     let finalMoveCount = steps.stepsTaken;
     let playerName = "";
 
-    // interface Scores {
-    //   name: string;
-    //   score: number;
-    // }
     let highScores = JSON.parse(localStorage.getItem("highScores")!);
     console.log("highScores before IF", highScores);
 
@@ -28,16 +24,6 @@ export default class Victory extends Phaser.Scene {
       // sort highScores from smallest number of steps
       highScores.sort((a, b) => a.score - b.score);
       console.log("highScores after sort", highScores);
-      // for (let i = 0; i <= highScores.length - 1; i++) {
-      //   if (finalMoveCount < highScores[i].score) {
-      //     highScore = true;
-      //     highScores.splice(i, 0, {
-      //       name: `${playerName}`,
-      //       score: finalMoveCount,
-      //     });
-      //     break;
-      //   }
-      // }
     }
 
     let form = `
@@ -51,7 +37,7 @@ export default class Victory extends Phaser.Scene {
     });
     myText.visible = true;
 
-    let nameInputForm = this.add.dom(51e, 100).createFromHTML(form);
+    let nameInputForm = this.add.dom(51, 100).createFromHTML(form);
     nameInputForm.addListener("click");
     let setScoreFlag = false;
 
