@@ -29,11 +29,6 @@ export default class Victory extends Phaser.Scene {
     <input class="user-input" type="text" name="nameField" placeholder="Enter your name" style="font-size: 4px"/>
     <input class="user-input" type="button" name="saveButton" value="Save Your Score" style="font-size: 4px" />
     `;
-    // let myText = this.add.text(10, height * 0.4, "Please enter your name:", {
-    //   color: "red",
-    //   fontSize: "12px",
-    // });
-    // myText.visible = true;
 
     let nameInputForm = this.add.dom(51, 80).createFromHTML(form);
     nameInputForm.addListener("click");
@@ -51,7 +46,7 @@ export default class Victory extends Phaser.Scene {
           //  Hide the login nameInputForm
           this.setVisible(false);
 
-          playerName = textInput.value;
+          playerName = textInput.value.trim().replace(/ /g, "").substr(0, 10);
           // myText.visible = false;
           // Checks if the users score is a high score and inserts it appropriately
           for (let i = 0; i <= highScores.length - 1; i++) {

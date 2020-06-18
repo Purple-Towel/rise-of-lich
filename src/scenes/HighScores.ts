@@ -36,11 +36,11 @@ export default class HighScores extends Phaser.Scene {
           ...textStyle,
           fontsize: 8,
         });
-        this.add.text(120, 15 * i + 60, name, {
+        this.add.text(90, 15 * i + 60, name, {
           ...textStyle,
           fontsize: 8,
         });
-        this.add.text(190, 15 * i + 60, score, {
+        this.add.text(185, 15 * i + 60, score, {
           ...textStyle,
           fontsize: 8,
         });

@@ -41,10 +41,10 @@ export default class Intro extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.add.sprite(width * 0.5, height * 0.5, "lich").play("lich-idle");
+    this.add.sprite(width * 0.52, height * 0.5, "lich").play("lich-idle");
 
     this.add
-      .text(width * 0.5, height * 0.25, title, {
+      .text(width * 0.5, height * 0.2, title, {
         fontSize: 24,
         fontFamily: "Metal Mania",
         color: "#f00",
@@ -52,7 +52,7 @@ export default class Intro extends Phaser.Scene {
       .setOrigin(0.5);
 
     const enter = this.add
-      .text(width * 0.5, height * 0.75, message, {
+      .text(width * 0.5, height * 0.8, message, {
         fontFamily: "Metal Mania",
         fontSize: 16,
         color: "#f00",
