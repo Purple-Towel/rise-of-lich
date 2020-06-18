@@ -1,7 +1,7 @@
 // Victory scene when game beaten
 
-import Phaser from 'phaser';
-import TextBlink from '../game_components/TextBlink';
+import Phaser from "phaser";
+import TextBlink from "../game_components/TextBlink";
 
 export default class Victory extends Phaser.Scene {
   private highScore: boolean = false;
@@ -51,7 +51,7 @@ export default class Victory extends Phaser.Scene {
     });
     myText.visible = true;
 
-    let nameInputForm = this.add.dom(50, 100).createFromHTML(form);
+    let nameInputForm = this.add.dom(51e, 100).createFromHTML(form);
     nameInputForm.addListener("click");
     let setScoreFlag = false;
 

@@ -1,10 +1,8 @@
-<<<<<<< HEAD:src/index.js
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
-// import playGame from './phaser/scene';
 import Phaser from "phaser";
 import Game from "./scenes/GameScene";
 import Preload from "./scenes/Preload";
@@ -12,38 +10,12 @@ import Intro from "./scenes/Intro";
 import GameOver from "./scenes/GameOver";
 import Transition from "./scenes/Transition";
 import Victory from "./scenes/Victory";
-// import RexUIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
-=======
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './components/App';
-import * as serviceWorker from './serviceWorker';
-import Phaser from 'phaser';
-import Game from './scenes/GameScene';
-import Preload from './scenes/Preload';
-import Intro from './scenes/Intro';
-import GameOver from './scenes/GameOver';
-import Transition from './scenes/Transition';
-import Victory from './scenes/Victory';
->>>>>>> 2d168e8672f0a35fae1afad5d551115b1f24140e:src/index.tsx
 
 const config = {
   type: Phaser.AUTO,
   width: 256,
   height: 192,
   parent: "game",
-  // plugins: {
-  //   scene: [
-  //     {
-  //       key: "rexUI",
-  //       // plugin: TextEditPlugin,
-  //       plugin: Preload.
-  //       start: true,
-  //       mapping: "rexUI",
-  //     },
-  //   ],
-  // },
   dom: {
     createContainer: true,
   },
