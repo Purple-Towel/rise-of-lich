@@ -6,27 +6,37 @@ import level2 from '../game_components/levels/level2';
 import level3 from '../game_components/levels/level3';
 import level4 from '../game_components/levels/level4';
 import level5 from '../game_components/levels/level5';
+import Level from '../interfaces/Level';
+import BaseTween from '../interfaces/BaseTween';
 import damageIndicator from '../helpers/damageIndicator';
+import createAnimations from '../helpers/animations';
+import addSoundEffects from '../helpers/soundEffects';
+import Box from '../game_components/Box';
+import Barrier from '../game_components/Barrier';
+import Enemy, { DEMON, SKELETON, OGRE } from '../game_components/Enemy';
+import Spike from '../game_components/spikes/Spike';
+import AlternatingSpike from '../game_components/spikes/AlternatingSpike';
+import Player from '../game_components/Player';
 
 export default class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private player?: Phaser.GameObjects.Sprite;
-  private enemy_skeleton?: Phaser.GameObjects.Sprite[];
-  private enemy_ogre?: Phaser.GameObjects.Sprite[];
-  private enemy_demon?: Phaser.GameObjects.Sprite[];
-  private enemies?: Phaser.GameObjects.Sprite[];
-  private boxes: Phaser.GameObjects.Sprite[] = [];
-  private spikes: Phaser.GameObjects.Sprite[] = [];
-  private spikesAlternating1: Phaser.GameObjects.Sprite[] = [];
-  private spikesAlternating2: Phaser.GameObjects.Sprite[] = [];
-  private barriers: Phaser.GameObjects.Sprite[] = [];
+  private skeleton?: Enemy;
+  private ogre?: Enemy;
+  private demon?: Enemy;
+  private box?: Box;
+  private spikes?: Spike;
+  private spikesAlternating1?: AlternatingSpike;
+  private spikesAlternating2?: AlternatingSpike;
+  private barrier?: Barrier;
   private layer?: Phaser.Tilemaps.StaticTilemapLayer;
   private facing: 'right' | 'left' = 'right';
   private moves: number = 50;
   private isGameOver: boolean = false;
   private steps = 0;
   private movesText?: Phaser.GameObjects.Text;
-  private levels = [level1, level2, level3, level4, level5];
+  private stepsText?: Phaser.GameObjects.Text;
+  private levels: Level[] = [level1, level2, level3, level4, level5];
   private currentLevel: number = 1;
   private bgMusic!: Phaser.Sound.BaseSound;
   private mute: boolean = false;
@@ -57,57 +67,15 @@ export default class Game extends Phaser.Scene {
     const tiles = map.addTilesetImage('tiles');
     this.layer = map.createStaticLayer(0, tiles, 0, 0);
 
-    // construct barriers to movement from tiles
-    this.barriers = this.layer
-      .createFromTiles(49, 11, { key: 'tiles', frame: 49 })
-      .map(barrier => barrier.setOrigin(0));
-
-    this.spikes = this.layer
-      .createFromTiles(777, 11, { key: 'character', frame: 356 })
-      .map(spike => spike.setOrigin(0));
-
-    this.spikesAlternating1 = this.layer
-      .createFromTiles(778, 11, { key: 'character', frame: 353 })
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
-
-    this.spikesAlternating2 = this.layer
-      .createFromTiles(779, 11, { key: 'character', frame: 356 })
-      .map(spikeAlternating1 => spikeAlternating1.setOrigin(0));
-
-    this.boxes = this.layer
-      .createFromTiles(83, 11, { key: 'tiles', frame: 83 })
-      .map(box => box.setOrigin(0));
-
-    this.player = this.layer
-      .createFromTiles(400, 11, { key: 'character', frame: 40 })
-      .pop();
-
-    this.enemy_skeleton = this.layer
-      .createFromTiles(223, 11, {
-        key: 'character',
-      })
-      .map(e => e.setOrigin(0));
-
-    this.enemy_ogre = this.layer
-      .createFromTiles(224, 11, {
-        key: 'character',
-      })
-      .map(e => e.setOrigin(0));
-
-    this.enemy_demon = this.layer
-      .createFromTiles(222, 11, {
-        key: 'character',
-        frame: 119,
-      })
-      .map(e => e.setOrigin(0));
-
-    if (this.enemy_skeleton && this.enemy_ogre && this.enemy_demon) {
-      this.enemies = [
-        ...this.enemy_skeleton,
-        ...this.enemy_ogre,
-        ...this.enemy_demon,
-      ];
-    }
+    this.barrier = new Barrier(this.layer);
+    this.spikes = new Spike(this.layer);
+    this.spikesAlternating1 = new AlternatingSpike(false, this.layer);
+    this.spikesAlternating2 = new AlternatingSpike(true, this.layer);
+    this.box = new Box(this.layer);
+    this.player = new Player(this.layer).player;
+    this.demon = new Enemy(DEMON, this.layer);
+    this.skeleton = new Enemy(SKELETON, this.layer);
+    this.ogre = new Enemy(OGRE, this.layer);
 
     // create mute text if state is muted
     this.muteMessage = this.add
@@ -127,12 +95,8 @@ export default class Game extends Phaser.Scene {
 
     // insert player and create necessary animations
     this.player?.setOrigin(0);
-    // this.createPlayerAnimations();
-    // this.createSpikeAnimations();
-    // this.createEnemyAnimations('skeleton');
-    // this.createEnemyAnimations('ogre');
-    // this.createEnemyAnimations('demon');
-    this.createAnimations();
+
+    createAnimations(this);
 
     // create stamina counter
     this.add.image(this.scale.width * 0.05, 16, 'hud-icon');
@@ -156,12 +120,7 @@ export default class Game extends Phaser.Scene {
       delay: 0,
     });
     this.bgMusic.play();
-    this.sound.add('audio_box_drag', { volume: 0.4 });
-    this.sound.add('audio_wall_bump', { volume: 0.5 });
-    this.sound.add('audio_monster_death_1');
-    this.sound.add('audio_monster_death_2');
-    this.sound.add('punch');
-    this.sound.add('kick');
+    addSoundEffects(this);
 
     // bind keys to special functions
     this.input.keyboard.once('keydown-R', this.resetLevel, this);
@@ -173,19 +132,19 @@ export default class Game extends Phaser.Scene {
       return;
     }
 
-    if (this.enemy_skeleton) {
-      for (let skeleton of this.enemy_skeleton!) {
+    if (this.skeleton) {
+      for (let skeleton of this.skeleton.enemies!) {
         // avoids trying to play animation for killed enemies
         if (skeleton) skeleton.anims.play('skeleton_idle', true);
       }
     }
-    if (this.enemy_ogre) {
-      for (let ogre of this.enemy_ogre!) {
+    if (this.ogre) {
+      for (let ogre of this.ogre.enemies!) {
         if (ogre) ogre.anims.play('ogre_idle', true);
       }
     }
-    if (this.enemy_demon) {
-      for (let demon of this.enemy_demon!) {
+    if (this.demon) {
+      for (let demon of this.demon.enemies!) {
         if (!demon) {
           return;
         } else demon.anims.play('demon_idle', true);
@@ -243,21 +202,21 @@ export default class Game extends Phaser.Scene {
     // check if already tweening, if so, then don't do anything.
     if (this.tweens.isTweening(this.player!)) return undefined;
 
-    // if next move has wall escape early
-    if (this.hasObstruction(x, y)) {
-      this.sound.play('audio_wall_bump');
-      return undefined;
-    }
-
     // if you reach the finishing tile, start the next scene
     const levelFinished =
       this.getTileAt(x, y, 39) &&
       this.moves >= 2 &&
       !this.isGameOver &&
-      !this.getBoxAt(x, y);
+      !this.box?.getBoxAt(x, y);
 
     if (levelFinished) {
       this.transition();
+    }
+
+    // if next move has wall escape early
+    if (this.hasObstruction(x, y)) {
+      this.sound.play('audio_wall_bump');
+      return undefined;
     }
 
     const directionXY = {
@@ -265,10 +224,7 @@ export default class Game extends Phaser.Scene {
       negative: '-=16',
     };
 
-    const box = this.getBoxAt(x, y);
-    const enemy = this.getEnemyAt(x, y);
-
-    const baseTween = {
+    const baseTween: BaseTween = {
       [axis]: directionXY[direction],
       duration: 400,
       onStart: () => {
@@ -284,67 +240,25 @@ export default class Game extends Phaser.Scene {
       onComplete: () => {
         this.player?.anims.play('idle', true);
       },
-      onCompleteScope: this,
     };
 
+    const box = this.box?.getBoxAt(x, y);
+    // const enemy = this.getEnemyAt(x, y);
+    const enemy =
+      this.skeleton?.getEnemyAt(x, y) ||
+      this.ogre?.getEnemyAt(x, y) ||
+      this.demon?.getEnemyAt(x, y);
+
     if (box) {
-      // move box
-      if (this.tweens.isTweening(box)) {
-        return undefined;
-      }
-      if (!this.checkBoxMovement(box, axis, direction)) {
-        return undefined;
-      }
-      this.sound.play('audio_box_drag');
-
-      this.tweens.add({
-        ...baseTween,
-        targets: box,
-      });
+      this.moveBox(box, axis, direction, baseTween);
     } else if (enemy) {
-      // move enemy
-      if (this.tweens.isTweening(enemy)) {
-        return undefined;
-      }
-      // if player moves against blocked enemy, enemy gets killed
-      if (!this.checkBoxMovement(enemy, axis, direction)) {
-        enemy.anims.pause();
-        enemy.setTint(0xff0000);
-        if (Math.floor(Math.random() * 10 + 1) % 2) {
-          this.sound.play('punch');
-          this.sound.play('audio_monster_death_1');
-        } else {
-          this.sound.play('kick');
-          this.sound.play('audio_monster_death_2');
-        }
-
-        // nX and nY were necessary to center animation on tile
-        let nX = x + 4;
-        let nY = y + 4;
-        this.tweens.add({
-          ...baseTween,
-          targets: enemy,
-          x: nX,
-          y: nY,
-          scale: 0,
-          rotation: 90,
-        });
-        return undefined;
-      }
-      this.tweens.add({
-        ...baseTween,
-        targets: enemy,
-      });
+      this.moveEnemy(enemy, x, y, axis, direction, baseTween);
     } else {
-      // move player
-      this.tweens.add({
-        ...baseTween,
-        targets: this.player,
-      });
+      this.movePlayer(baseTween);
     }
 
     //check if square is spike
-    const spike = this.getSpikeAt(x, y);
+    const spike = this.spikes?.getSpikeAt(x, y);
 
     if (spike) {
       if (this.player) {
@@ -353,39 +267,144 @@ export default class Game extends Phaser.Scene {
       return this.decrementMoves();
     }
 
+    const { extended1, extended2 } = this.playSpikeAnim();
+
+    this.checkAlternatingDamage(x, y, extended1, extended2);
+  }
+
+  // moves only the player sprite
+  private movePlayer(baseTween: BaseTween) {
+    // move player
+    this.tweens.add({
+      ...baseTween,
+      targets: this.player,
+      onCompleteScope: this,
+    });
+  }
+
+  // moves only enemy sprite
+  private moveEnemy(
+    enemy: Phaser.GameObjects.Sprite,
+    x: number,
+    y: number,
+    axis: string,
+    direction: 'positive' | 'negative',
+    baseTween: BaseTween
+  ) {
+    // move enemy
+    if (this.tweens.isTweening(enemy)) {
+      return undefined;
+    }
+    // if player moves against blocked enemy, enemy gets killed
+    if (!this.checkBoxMovement(enemy, axis, direction)) {
+      enemy.anims.pause();
+      enemy.setTint(0xff0000);
+      if (Math.floor(Math.random() * 10 + 1) % 2) {
+        this.sound.play('punch');
+        this.sound.play('audio_monster_death_1');
+      } else {
+        this.sound.play('kick');
+        this.sound.play('audio_monster_death_2');
+      }
+
+      // nX and nY were necessary to center animation on tile
+      let nX = x + 4;
+      let nY = y + 4;
+      this.tweens.add({
+        ...baseTween,
+        targets: enemy,
+        x: nX,
+        y: nY,
+        scale: 0,
+        rotation: 90,
+        onCompleteScope: this,
+      });
+      return undefined;
+    }
+    this.tweens.add({
+      ...baseTween,
+      targets: enemy,
+    });
+  }
+
+  // moves only box
+  private moveBox(
+    box: Phaser.GameObjects.Sprite,
+    axis: string,
+    direction: 'positive' | 'negative',
+    baseTween: BaseTween
+  ) {
+    // move box
+    if (this.tweens.isTweening(box)) {
+      return undefined;
+    }
+    if (!this.checkBoxMovement(box, axis, direction)) {
+      return undefined;
+    }
+    this.sound.play('audio_box_drag');
+
+    this.tweens.add({
+      ...baseTween,
+      targets: box,
+      onCompleteScope: this,
+    });
+  }
+
+  // plays spike animation and determines position of spikes
+  private playSpikeAnim() {
+    let extended1 = true;
+    let extended2 = false;
     if (this.steps % 2 === 0) {
-      for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play('extend');
+      extended1 = true;
+      extended2 = false;
+      if (this.spikesAlternating1) {
+        for (let sprite of this.spikesAlternating1.spikes) {
+          sprite.anims.play('extend');
+        }
       }
-      for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play('retract');
-      }
-    }
-
-    if (this.steps % 2 === 1) {
-      for (let sprite of this.spikesAlternating1) {
-        sprite.anims.play('retract');
-      }
-      for (let sprite of this.spikesAlternating2) {
-        sprite.anims.play('extend');
+      if (this.spikesAlternating2) {
+        for (let sprite of this.spikesAlternating2.spikes) {
+          sprite.anims.play('retract');
+        }
       }
     }
 
-    // check if square is alternating spike
-    const spikeAlternating1 = this.getSpikeAlternating1(x, y);
-    const spikeAlternating2 = this.getSpikeAlternating2(x, y);
-    if (spikeAlternating1) {
-      const canHurt1 = this.canSpikeAlternating1Hurt();
-      if (canHurt1) {
-        damageIndicator(this.player!, this.sound.add('damage'));
-        return this.decrementMoves();
+    if (this.steps % 2 !== 0) {
+      extended1 = false;
+      extended2 = true;
+      if (this.spikesAlternating1) {
+        for (let sprite of this.spikesAlternating1.spikes) {
+          sprite.anims.play('retract');
+        }
+      }
+      if (this.spikesAlternating2) {
+        for (let sprite of this.spikesAlternating2.spikes) {
+          sprite.anims.play('extend');
+        }
       }
     }
-    if (spikeAlternating2) {
-      const canHurt2 = this.canSpikeAlternating2Hurt();
-      if (canHurt2) {
+    return { extended1, extended2 };
+  }
+
+  // if spike is in extended position, deal damage
+  private checkAlternatingDamage(
+    x: number,
+    y: number,
+    extended1: boolean,
+    extended2: boolean
+  ) {
+    const Alternating1 = this.spikesAlternating1?.getSpikeAlternating(x, y);
+    const Alternating2 = this.spikesAlternating2?.getSpikeAlternating(x, y);
+    if (Alternating1) {
+      if (extended1) {
         damageIndicator(this.player!, this.sound.add('damage'));
-        return this.decrementMoves();
+        this.decrementMoves();
+      }
+    }
+    if (Alternating2) {
+      if (extended2) {
+        damageIndicator(this.player!, this.sound.add('damage'));
+        this.decrementMoves();
       }
     }
   }
@@ -430,7 +449,7 @@ export default class Game extends Phaser.Scene {
       return false;
     }
 
-    const barrier = this.getBarrierAt(x, y);
+    const barrier = this.barrier?.getBarrierAt(x, y);
     if (barrier) {
       return true;
     }
@@ -446,34 +465,14 @@ export default class Game extends Phaser.Scene {
   private hasObjectObstruction(x: number, y: number) {
     if (
       this.hasObstruction(x, y) ||
-      this.getBoxAt(x, y) ||
-      this.getEnemyAt(x, y)
+      this.box?.getBoxAt(x, y) ||
+      // this.getEnemyAt(x, y)
+      this.skeleton?.getEnemyAt(x, y) ||
+      this.ogre?.getEnemyAt(x, y) ||
+      this.demon?.getEnemyAt(x, y)
     ) {
       return true;
     }
-  }
-
-  // returns moveable box based on x & y coords
-  private getBoxAt(x: number, y: number) {
-    return this.boxes.find(box => {
-      const rect = box.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private getEnemyAt(x: number, y: number) {
-    return this.enemies?.find(enemy => {
-      const rect = enemy.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  // returns a barrier of movement based on x & y coords
-  private getBarrierAt(x: number, y: number) {
-    return this.barriers.find(barrier => {
-      const rect = barrier.getBounds();
-      return rect.contains(x, y);
-    });
   }
 
   // gets any tile you specify based on the index it is in the tilesheet
@@ -485,39 +484,6 @@ export default class Game extends Phaser.Scene {
     if (tile.index === index) {
       return tile;
     }
-  }
-
-  private getSpikeAt(x: number, y: number) {
-    return this.spikes.find(spikes => {
-      const rect = spikes.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private getSpikeAlternating1(x: number, y: number) {
-    return this.spikesAlternating1.find(spikesAlternating1 => {
-      const rect = spikesAlternating1.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private getSpikeAlternating2(x: number, y: number) {
-    return this.spikesAlternating2.find(spikesAlternating2 => {
-      const rect = spikesAlternating2.getBounds();
-      return rect.contains(x, y);
-    });
-  }
-
-  private canSpikeAlternating1Hurt() {
-    if (this.steps % 2 === 0) {
-      return true;
-    } else return false;
-  }
-
-  private canSpikeAlternating2Hurt() {
-    if (this.steps % 2 === 1) {
-      return true;
-    } else return false;
   }
 
   // decrement by 1 if no argument passed
@@ -563,7 +529,7 @@ export default class Game extends Phaser.Scene {
   // transisition to gameover scene
   private gameOver() {
     this.player?.setTint(0xff0000);
-    this.sound.add('game_over').play();
+    this.sound.play('game_over');
     this.input.keyboard.enabled = false;
     this.isGameOver = false;
     setTimeout(() => {
@@ -591,145 +557,5 @@ export default class Game extends Phaser.Scene {
         });
       }
     }, 700);
-  }
-
-  // create animations for player sprite
-  // private createPlayerAnimations() {
-  //   this.anims.create({
-  //     key: 'move',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 45,
-  //       end: 46,
-  //     }),
-  //     frameRate: 10,
-  //     repeat: -1,
-  //   });
-
-  //   this.anims.create({
-  //     key: 'idle',
-  //     frames: [{ key: 'character', frame: 40 }],
-  //     frameRate: 20,
-  //   });
-  // }
-
-  // private createSpikeAnimations() {
-  //   this.anims.create({
-  //     key: 'extend',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 353,
-  //       end: 356,
-  //     }),
-  //     frameRate: 10,
-  //   });
-  //   this.anims.create({
-  //     key: 'retract',
-  //     frames: this.anims.generateFrameNumbers('character', {
-  //       start: 356,
-  //       end: 353,
-  //     }),
-  //     frameRate: 10,
-  //   });
-  // }
-
-  // private createEnemyAnimations(enemyType: string) {
-  //   if (enemyType === 'skeleton') {
-  //     this.anims.create({
-  //       key: 'skeleton_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 183,
-  //         end: 190,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  //   if (enemyType === 'ogre') {
-  //     this.anims.create({
-  //       key: 'ogre_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 375,
-  //         end: 382,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  //   if (enemyType === 'demon') {
-  //     this.anims.create({
-  //       key: 'demon_idle',
-  //       frames: this.anims.generateFrameNumbers('character', {
-  //         start: 119,
-  //         end: 126,
-  //       }),
-  //       frameRate: 5,
-  //       repeat: -1,
-  //     });
-  //   }
-  // }
-
-  private createAnimations() {
-    this.anims.create({
-      key: 'move',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 45,
-        end: 46,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'idle',
-      frames: [{ key: 'character', frame: 40 }],
-      frameRate: 20,
-    });
-
-    this.anims.create({
-      key: 'extend',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 353,
-        end: 356,
-      }),
-      frameRate: 10,
-    });
-
-    this.anims.create({
-      key: 'retract',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 356,
-        end: 353,
-      }),
-      frameRate: 10,
-    });
-
-    this.anims.create({
-      key: 'skeleton_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 183,
-        end: 190,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'ogre_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 375,
-        end: 382,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'demon_idle',
-      frames: this.anims.generateFrameNumbers('character', {
-        start: 119,
-        end: 126,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
   }
 }
