@@ -18,10 +18,10 @@ export default class Intro extends Phaser.Scene {
 
     const highScores = [
       { name: "jack", score: 995 },
-      { name: "jill", score: 2 },
-      { name: "joe", score: 6 },
-      { name: "jane", score: 18 },
-      { name: "john", score: 39 },
+      { name: "jill", score: 996 },
+      { name: "joe", score: 997 },
+      { name: "jane", score: 998 },
+      { name: "john", score: 999 },
     ];
 
     localStorage.setItem("highScores", JSON.stringify(highScores));
