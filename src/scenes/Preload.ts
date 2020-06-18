@@ -1,45 +1,55 @@
 // Preload all assets into game
 
-import Phaser from 'phaser';
-import WebFontLoader from '../game_components/WebFontLoader';
+import Phaser from "phaser";
+import WebFontLoader from "../game_components/WebFontLoader";
 
 export default class Preload extends Phaser.Scene {
   constructor() {
-    super('preload');
+    super("preload");
   }
 
   preload() {
     // load spritesheets
-    this.load.spritesheet('ghost-idle', 'assets/ghost-idle.png', {
+    this.load.spritesheet("ghost-idle", "assets/ghost-idle.png", {
       frameWidth: 64,
       frameHeight: 64,
     });
 
-    this.load.spritesheet('tiles', 'assets/Dungeon_Tileset.png', {
+    this.load.spritesheet("tiles", "assets/Dungeon_Tileset.png", {
       frameWidth: 16,
       startFrame: 0,
     });
 
     this.load.spritesheet(
-      'character',
-      'assets/0x72_DungeonTilesetII_v1.3.png',
+      "character",
+      "assets/0x72_DungeonTilesetII_v1.3.png",
       {
         frameWidth: 16,
         startFrame: 0,
       }
     );
 
-    this.load.spritesheet('lich', 'assets/demon-idle.png', {
+    this.load.spritesheet("lich", "assets/demon-idle.png", {
       frameWidth: 160,
       frameHeight: 140,
     });
 
-    this.load.spritesheet('hud-icon', 'assets/hud-icon.png', {
+    this.load.spritesheet("hud-icon", "assets/hud-icon.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
 
-    const fonts = new WebFontLoader(this.load, ['Metal Mania']);
+    // this.load.spritesheet("dust", "assets/dust.png", {
+    //   frameWidth: 10,
+    //   frameHeight: 7,
+    // });
+
+    this.load.spritesheet("smoke", "assets/dust.png", {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    const fonts = new WebFontLoader(this.load, ["Metal Mania"]);
     this.load.addFile(fonts);
 
     // load sounds
@@ -59,6 +69,6 @@ export default class Preload extends Phaser.Scene {
   update() {}
 
   create() {
-    this.scene.start('intro');
+    this.scene.start("intro");
   }
 }
