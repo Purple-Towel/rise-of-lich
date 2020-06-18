@@ -14,7 +14,8 @@ export default class Victory extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    let finalMoveCount = steps.stepsTaken;
+    let finalMoveCount =
+      steps.stepsTaken || parseInt(localStorage.getItem("steps")!);
     let playerName = "";
 
     let highScores = JSON.parse(localStorage.getItem("highScores")!);
