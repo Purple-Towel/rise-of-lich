@@ -287,7 +287,7 @@ export default class Game extends Phaser.Scene {
       duration: 400,
       onStart: () => {
         this.player?.anims.play("move", true);
-        // this.anims.play("smoke-puff", this.boxes[0]);
+
         this.decrementMoves();
         this.steps += 1;
         this.movesText?.setText(`${this.moves}`);
@@ -312,14 +312,11 @@ export default class Game extends Phaser.Scene {
       }
       this.sound.play("audio_box_drag");
       box.anims.play("smoke-puff", true);
-      //next test will be loop over boxes play in all
-
       this.tweens.add({
         ...baseTween,
         targets: box,
       });
     } else if (enemy) {
-      // move enemy
       if (this.tweens.isTweening(enemy)) {
         return undefined;
       }
@@ -348,11 +345,12 @@ export default class Game extends Phaser.Scene {
         });
         return undefined;
       }
-      // this.anims.play("smoke-puff", enemy);
+      // move enemy
       this.tweens.add({
         ...baseTween,
         targets: enemy,
       });
+      enemy.anims.play("smoke-puff", true);
     } else {
       // move player
       // this.anims.play("smoke-puff", this.player!);
@@ -759,7 +757,7 @@ export default class Game extends Phaser.Scene {
         start: 0,
         end: 7,
       }),
-      frameRate: 5,
+      frameRate: 20,
     });
   }
 }

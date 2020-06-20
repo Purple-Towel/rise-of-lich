@@ -44,9 +44,11 @@ export default class Preload extends Phaser.Scene {
     //   frameHeight: 7,
     // });
 
-    this.load.spritesheet("smoke", "assets/dust.png", {
+    this.load.spritesheet("smoke", "assets/smoke.png", {
       frameWidth: 16,
+      frameHeight: 16,
       startFrame: 0,
+      endFrame: 8,
     });
 
     const fonts = new WebFontLoader(this.load, ["Metal Mania"]);
