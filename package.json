@@ -8,7 +8,7 @@
     "@types/react-dom": "^16.9.8",
     "@types/styled-components": "^5.1.0",
     "@types/webfontloader": "^1.6.32",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "phaser": "^3.23.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
